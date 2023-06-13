@@ -421,4 +421,68 @@ class QuillController extends ChangeNotifier {
 
   // Notify toolbar buttons directly with attributes
   Map<String, Attribute> toolbarButtonToggler = {};
+
+  /// setTag
+  /// 
+  /// changes.listen 내에서 Tag 감지
+  /// 
+  /// Duke Jeon (duke@peoplus.studio)
+  void setTag(DocChange event) {
+    final start = RegExp(r'^@$');
+    final check = RegExp(r'^@[\S]+$');
+    final space = RegExp(r'\s');
+    
+    int? index;
+    final textLength = document.length;
+
+    for (final operation in event.change.toList()) {
+      if (operation.key == Operation.retainKey) {
+        index = operation.length;
+      }
+
+      if (operation.key == Operation.insertKey) {
+        if (operation.data is String) {
+          final str = operation.data.toString();
+          final isContain = operation.attributes?.keys.contains(
+            Attribute.tag.key
+          ) ?? false;
+
+          if (isContain && space.hasMatch(str)) {
+            if (index != null) {
+              formatText(
+                index,
+                index + 1,
+                Attribute.clone(
+                  Attribute.tag, null
+                )
+              );
+            }
+          }
+
+          index ??= 0;
+          if (index < textLength - 2) {
+            final text = document.toPlainText().substring(index, textLength - 1);
+            if (check.hasMatch(text)) {
+              formatText(
+                index,
+                index + text.length,
+                Attribute.tag
+              );
+              break;
+            }
+          } else {
+            if (start.hasMatch(str)) {
+              formatText(
+                index,
+                index + 1,
+                Attribute.tag
+              );
+              break;
+            }
+          }
+        }
+        index = null;
+      }
+    }
+  }
 }

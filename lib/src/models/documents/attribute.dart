@@ -118,6 +118,7 @@ class Attribute<T> {
   static const VideoAttribute video = VideoAttribute(null);
 
   static final Set<String> inlineKeys = {
+    Attribute.tag.key,
     Attribute.bold.key,
     Attribute.subscript.key,
     Attribute.superscript.key,
