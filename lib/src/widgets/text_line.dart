@@ -329,6 +329,7 @@ class _TextLineState extends State<TextLine> {
     final color = textNode.style.attributes[Attribute.color.key];
 
     <String, TextStyle?>{
+      Attribute.tag.key: defaultStyles.tag,
       Attribute.bold.key: defaultStyles.bold,
       Attribute.italic.key: defaultStyles.italic,
       Attribute.small.key: defaultStyles.small,
