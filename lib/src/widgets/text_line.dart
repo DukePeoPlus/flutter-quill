@@ -349,7 +349,7 @@ class _TextLineState extends State<TextLine> {
           // null value for link should be ignored
           // i.e. nodeStyle.attributes[Attribute.link.key]!.value == null
         } else if (k == Attribute.tag.key) {
-          // null value for tag should be ignored
+          res = defaultStyles.tag!;
         } else {
           res = _merge(res, s!);
         }
