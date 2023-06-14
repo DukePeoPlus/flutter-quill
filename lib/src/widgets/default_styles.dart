@@ -142,6 +142,7 @@ class DefaultStyles {
     this.h2,
     this.h3,
     this.paragraph,
+    this.tag,
     this.bold,
     this.subscript,
     this.superscript,
@@ -168,6 +169,7 @@ class DefaultStyles {
   final DefaultTextBlockStyle? h2;
   final DefaultTextBlockStyle? h3;
   final DefaultTextBlockStyle? paragraph;
+  final TextStyle? tag;
   final TextStyle? bold;
   final TextStyle? subscript;
   final TextStyle? superscript;
@@ -249,6 +251,7 @@ class DefaultStyles {
             null),
         paragraph: DefaultTextBlockStyle(baseStyle, const VerticalSpacing(0, 0),
             const VerticalSpacing(0, 0), null),
+        tag: const TextStyle(color: Color(0xFF588FF9)),
         bold: const TextStyle(fontWeight: FontWeight.bold),
         subscript: const TextStyle(fontFeatures: [FontFeature.subscripts()]),
         superscript:

@@ -18,6 +18,8 @@ class Attribute<T> {
   final T value;
 
   static final Map<String, Attribute> _registry = LinkedHashMap.of({
+    Attribute.tag.key: Attribute.tag,
+    Attribute.hashtag.key: Attribute.hashtag,
     Attribute.bold.key: Attribute.bold,
     Attribute.subscript.key: Attribute.subscript,
     Attribute.superscript.key: Attribute.superscript,
@@ -48,6 +50,8 @@ class Attribute<T> {
     Attribute.video.key: Attribute.video,
   });
 
+  static const TagAttribute tag = TagAttribute();
+  static const HashtagAttribute hashtag = HashtagAttribute();
   static const BoldAttribute bold = BoldAttribute();
 
   static final ScriptAttribute subscript =
@@ -115,6 +119,8 @@ class Attribute<T> {
   static const VideoAttribute video = VideoAttribute(null);
 
   static final Set<String> inlineKeys = {
+    Attribute.tag.key,
+    Attribute.hashtag.key,
     Attribute.bold.key,
     Attribute.subscript.key,
     Attribute.superscript.key,
@@ -262,6 +268,13 @@ class Attribute<T> {
   String toString() {
     return 'Attribute{key: $key, scope: $scope, value: $value}';
   }
+}
+
+class TagAttribute extends Attribute<bool> {
+  const TagAttribute() : super('tag', AttributeScope.INLINE, true);
+}
+class HashtagAttribute extends Attribute<bool> {
+  const HashtagAttribute() : super('hashtag', AttributeScope.INLINE, true);
 }
 
 class BoldAttribute extends Attribute<bool> {
