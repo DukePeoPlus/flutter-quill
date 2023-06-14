@@ -51,7 +51,9 @@ class Attribute<T> {
   });
 
   static const TagAttribute tag = TagAttribute();
+
   static const HashtagAttribute hashtag = HashtagAttribute();
+
   static const BoldAttribute bold = BoldAttribute();
 
   static final ScriptAttribute subscript =
@@ -276,7 +278,6 @@ class TagAttribute extends Attribute<bool> {
 class HashtagAttribute extends Attribute<bool> {
   const HashtagAttribute() : super('hashtag', AttributeScope.INLINE, true);
 }
-
 class BoldAttribute extends Attribute<bool> {
   const BoldAttribute() : super('bold', AttributeScope.INLINE, true);
 }
