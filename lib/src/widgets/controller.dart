@@ -426,41 +426,61 @@ class QuillController extends ChangeNotifier {
   /// 
   /// Duke Jeon (duke@peoplus.studio)
   void setTag(DocChange event) {
-    final start = RegExp(r'^@$');
-    final check = RegExp(r'^@[\S]+$');
+    final startTag = RegExp(r'^@$');
+    final checkTag = RegExp(r'^@[\S]+$');
+    final startHashTag = RegExp(r'^#$');
+    final checkHashTag = RegExp(r'^#[\S]+$');
     final space = RegExp(r'\s');
     
     int? index;
     final textLength = document.length;
-
     for (final operation in event.change.toList()) {
+
+      final isTag = operation.attributes?.keys.contains(Attribute.tag.key)
+        ?? false;
+      final isHashtag = operation.attributes?.keys.contains(Attribute.hashtag.key)
+        ?? false;
+      final isContain = isTag || isHashtag;
+
       if (operation.key == Operation.retainKey) {
         index = operation.length;
-      }
-
-      if (operation.key == Operation.insertKey) {
+      } else if (operation.key == Operation.insertKey) {
         if (operation.data is String) {
           final str = operation.data.toString();
-          final isContain = operation.attributes?.keys.contains(
-            Attribute.tag.key
-          ) ?? false;
-
+          // Attribute가 tag 또는 hashtag 일 경우 스페이스가 포함되면 Attribute 삭제
           if (isContain && space.hasMatch(str)) {
             if (index != null) {
+              Attribute attribute = Attribute.tag;
+
+              if (isHashtag) {
+                attribute = Attribute.hashtag;
+              }
+
               formatText(
                 index,
                 index + 1,
                 Attribute.clone(
-                  Attribute.tag, null
+                  attribute, null
                 )
               );
             }
+            return;
           }
 
           index ??= 0;
           if (index < textLength - 2) {
             final text = document.toPlainText().substring(index, textLength - 1);
-            if (check.hasMatch(text)) {
+
+            if (checkTag.hasMatch(text) && !isContain) {
+              replaceText(
+                index,
+                text.length,
+                ' $text ',
+                TextSelection.collapsed(
+                  offset: index
+                )
+              );
+
               formatText(
                 index,
                 index + text.length,
@@ -469,7 +489,7 @@ class QuillController extends ChangeNotifier {
               break;
             }
           } else {
-            if (start.hasMatch(str)) {
+            if (startTag.hasMatch(str) && !isContain) {
               formatText(
                 index,
                 index + 1,
@@ -480,6 +500,32 @@ class QuillController extends ChangeNotifier {
           }
         }
         index = null;
+      } else if (operation.key == Operation.deleteKey) {
+        final operaions = document.toDelta().toList();
+        for (final tmpOperation in operaions) {
+          final hasTag = tmpOperation.hasAttribute(Attribute.tag.key);
+          final hasHashtag = tmpOperation.hasAttribute(Attribute.hashtag.key);
+          if (hasTag || hasHashtag) {
+            final plainText = document.toPlainText();
+
+            if (tmpOperation.data is String) {
+              final operaionData = tmpOperation.data as String;
+              final index = plainText.indexOf(operaionData);
+              final offset = selection.baseOffset;
+
+              if (index <= offset && offset <= index + operaionData.length) {
+                replaceText(
+                  index,
+                  operaionData.length,
+                  '',
+                  TextSelection.collapsed(
+                    offset: index
+                  )
+                );
+              }
+            }
+          }
+        }
       }
     }
   }
