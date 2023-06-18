@@ -442,6 +442,16 @@ class QuillController extends ChangeNotifier {
         ?? false;
       final isContain = isTag || isHashtag;
 
+      Attribute attribute = Attribute.tag;
+      var startRegExp = startTag;
+      var checkRegExp = checkTag;
+
+      if (isHashtag) {
+        attribute = Attribute.hashtag;
+        startRegExp = startHashTag;
+        checkRegExp = checkHashTag;
+      }
+
       if (operation.key == Operation.retainKey) {
         index = operation.length;
       } else if (operation.key == Operation.insertKey) {
@@ -450,12 +460,6 @@ class QuillController extends ChangeNotifier {
           // Attribute가 tag 또는 hashtag 일 경우 스페이스가 포함되면 Attribute 삭제
           if (isContain && space.hasMatch(str)) {
             if (index != null) {
-              Attribute attribute = Attribute.tag;
-
-              if (isHashtag) {
-                attribute = Attribute.hashtag;
-              }
-
               formatText(
                 index,
                 index + 1,
@@ -471,7 +475,7 @@ class QuillController extends ChangeNotifier {
           if (index < textLength - 2) {
             final text = document.toPlainText().substring(index, textLength - 1);
 
-            if (checkTag.hasMatch(text) && !isContain) {
+            if (checkRegExp.hasMatch(text) && !isContain) {
               replaceText(
                 index,
                 text.length,
@@ -484,16 +488,16 @@ class QuillController extends ChangeNotifier {
               formatText(
                 index,
                 index + text.length,
-                Attribute.tag
+                attribute
               );
               break;
             }
           } else {
-            if (startTag.hasMatch(str) && !isContain) {
+            if (startRegExp.hasMatch(str) && !isContain) {
               formatText(
                 index,
                 index + 1,
-                Attribute.tag
+                attribute
               );
               break;
             }
@@ -502,9 +506,11 @@ class QuillController extends ChangeNotifier {
         index = null;
       } else if (operation.key == Operation.deleteKey) {
         final operaions = document.toDelta().toList();
+
         for (final tmpOperation in operaions) {
           final hasTag = tmpOperation.hasAttribute(Attribute.tag.key);
           final hasHashtag = tmpOperation.hasAttribute(Attribute.hashtag.key);
+
           if (hasTag || hasHashtag) {
             final plainText = document.toPlainText();
 
