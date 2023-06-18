@@ -443,12 +443,10 @@ class QuillController extends ChangeNotifier {
       final isContain = isTag || isHashtag;
 
       Attribute attribute = Attribute.tag;
-      var startRegExp = startTag;
       var checkRegExp = checkTag;
 
       if (isHashtag) {
         attribute = Attribute.hashtag;
-        startRegExp = startHashTag;
         checkRegExp = checkHashTag;
       }
 
@@ -493,6 +491,13 @@ class QuillController extends ChangeNotifier {
               break;
             }
           } else {
+            var startRegExp = startTag;
+            final isHashtag = startHashTag.hasMatch(str);
+
+            if (isHashtag) {
+              startRegExp = startHashTag;
+            }
+
             if (startRegExp.hasMatch(str) && !isContain) {
               formatText(
                 index,
