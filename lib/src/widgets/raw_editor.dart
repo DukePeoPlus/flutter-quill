@@ -84,7 +84,7 @@ class RawEditor extends StatefulWidget {
     this.onImagePaste,
     this.customLinkPrefixes = const <String>[],
     this.dialogTheme,
-    this.contentInsertionConfiguration,
+    // this.contentInsertionConfiguration,
   })  : assert(maxHeight == null || maxHeight > 0, 'maxHeight cannot be null'),
         assert(minHeight == null || minHeight >= 0, 'minHeight cannot be null'),
         assert(maxHeight == null || minHeight == null || maxHeight >= minHeight,
@@ -275,7 +275,7 @@ class RawEditor extends StatefulWidget {
   /// method.
   ///
   /// See [https://api.flutter.dev/flutter/widgets/EditableText/contentInsertionConfiguration.html]
-  final ContentInsertionConfiguration? contentInsertionConfiguration;
+  // final ContentInsertionConfiguration? contentInsertionConfiguration;
 
   @override
   State<StatefulWidget> createState() => RawEditorState();
@@ -336,13 +336,13 @@ class RawEditorState extends EditorState
   bool get dirty => _dirty;
   bool _dirty = false;
 
-  @override
-  void insertContent(KeyboardInsertedContent content) {
-    assert(widget.contentInsertionConfiguration?.allowedMimeTypes
-            .contains(content.mimeType) ??
-        false);
-    widget.contentInsertionConfiguration?.onContentInserted.call(content);
-  }
+  // @override
+  // void insertContent(KeyboardInsertedContent content) {
+  //   assert(widget.contentInsertionConfiguration?.allowedMimeTypes
+  //           .contains(content.mimeType) ??
+  //       false);
+  //   widget.contentInsertionConfiguration?.onContentInserted.call(content);
+  // }
 
   /// Returns the [ContextMenuButtonItem]s representing the buttons in this
   /// platform's default selection menu for [RawEditor].
@@ -968,7 +968,9 @@ class RawEditorState extends EditorState
         widget.selectionColor,
         widget.enableInteractiveSelection,
         _hasFocus,
-        View.of(context).devicePixelRatio,
+        // 06/19
+        // View.of(context).devicePixelRatio,
+        MediaQuery.of(context).devicePixelRatio,
         _cursorCont);
     return editableTextLine;
   }
@@ -1744,7 +1746,7 @@ class RawEditorState extends EditorState
 }
 
 class _Editor extends MultiChildRenderObjectWidget {
-  const _Editor({
+  _Editor({
     required Key key,
     required List<Widget> children,
     required this.document,

@@ -190,7 +190,7 @@ class QuillEditor extends StatefulWidget {
     this.enableUnfocusOnTapOutside = true,
     this.customLinkPrefixes = const <String>[],
     this.dialogTheme,
-    this.contentInsertionConfiguration,
+    // this.contentInsertionConfiguration,
     Key? key,
   }) : super(key: key);
 
@@ -435,7 +435,8 @@ class QuillEditor extends StatefulWidget {
   /// method.
   ///
   /// See [https://api.flutter.dev/flutter/widgets/EditableText/contentInsertionConfiguration.html]
-  final ContentInsertionConfiguration? contentInsertionConfiguration;
+  // 06/19
+  // final ContentInsertionConfiguration? contentInsertionConfiguration;
 
   @override
   QuillEditorState createState() => QuillEditorState();
@@ -478,7 +479,9 @@ class QuillEditorState extends State<QuillEditor>
           cupertinoTheme.primaryColor.withOpacity(0.40);
       cursorRadius ??= const Radius.circular(2);
       cursorOffset =
-          Offset(iOSHorizontalOffset / View.of(context).devicePixelRatio, 0);
+        // 06/19
+        // Offset(iOSHorizontalOffset / View.of(context).devicePixelRatio, 0);
+        Offset(iOSHorizontalOffset / MediaQuery.of(context).devicePixelRatio, 0);
     } else {
       textSelectionControls = materialTextSelectionControls;
       paintCursorAboveText = false;
@@ -538,7 +541,8 @@ class QuillEditorState extends State<QuillEditor>
       customLinkPrefixes: widget.customLinkPrefixes,
       enableUnfocusOnTapOutside: widget.enableUnfocusOnTapOutside,
       dialogTheme: widget.dialogTheme,
-      contentInsertionConfiguration: widget.contentInsertionConfiguration,
+      // 06/19
+      // contentInsertionConfiguration: widget.contentInsertionConfiguration,
     );
 
     final editor = I18n(

@@ -42,12 +42,12 @@ void main() {
             autoFocus: true,
             readOnly: false,
             expands: true,
-            contentInsertionConfiguration: ContentInsertionConfiguration(
-              onContentInserted: (content) {
-                latestUri = content.uri;
-              },
-              allowedMimeTypes: const <String>['image/gif'],
-            ),
+            // contentInsertionConfiguration: ContentInsertionConfiguration(
+            //   onContentInserted: (content) {
+            //     latestUri = content.uri;
+            //   },
+            //   allowedMimeTypes: const <String>['image/gif'],
+            // ),
           ),
         ),
       );
