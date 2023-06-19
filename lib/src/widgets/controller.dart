@@ -255,14 +255,6 @@ class QuillController extends ChangeNotifier {
       }
     }
 
-    if (_keepStyleOnNewLine) {
-      final style = getSelectionStyle();
-      final notInlineStyle = style.attributes.values.where((s) => !s.isInline);
-      toggledStyle = style.removeAll(notInlineStyle.toSet());
-    } else {
-      toggledStyle = Style();
-    }
-
     if (textSelection != null) {
       if (delta == null || delta.isEmpty) {
         _updateSelection(textSelection, ChangeSource.LOCAL);
@@ -400,7 +392,13 @@ class QuillController extends ChangeNotifier {
     _selection = selection.copyWith(
         baseOffset: math.min(selection.baseOffset, end),
         extentOffset: math.min(selection.extentOffset, end));
-    toggledStyle = Style();
+    if (_keepStyleOnNewLine) {
+      final style = getSelectionStyle();
+      final notInlineStyle = style.attributes.values.where((s) => !s.isInline);
+      toggledStyle = style.removeAll(notInlineStyle.toSet());
+    } else {
+      toggledStyle = Style();
+    }
     onSelectionChanged?.call(textSelection);
   }
 
@@ -421,4 +419,125 @@ class QuillController extends ChangeNotifier {
 
   // Notify toolbar buttons directly with attributes
   Map<String, Attribute> toolbarButtonToggler = {};
+
+  /// setTag
+  /// 
+  /// changes.listen 내에서 Tag 감지
+  /// 
+  /// Duke Jeon (duke@peoplus.studio)
+  void setTag(DocChange event) {
+    final startTag = RegExp(r'^@$');
+    final checkTag = RegExp(r'^@[\S]+$');
+    final startHashTag = RegExp(r'^#$');
+    final checkHashTag = RegExp(r'^#[\S]+$');
+    final space = RegExp(r'\s');
+    
+    int? index;
+    final textLength = document.length;
+    for (final operation in event.change.toList()) {
+
+      final isTag = operation.attributes?.keys.contains(Attribute.tag.key)
+        ?? false;
+      final isHashtag = operation.attributes?.keys.contains(Attribute.hashtag.key)
+        ?? false;
+      final isContain = isTag || isHashtag;
+
+      Attribute attribute = Attribute.tag;
+      var checkRegExp = checkTag;
+
+      if (isHashtag) {
+        attribute = Attribute.hashtag;
+        checkRegExp = checkHashTag;
+      }
+
+      if (operation.key == Operation.retainKey) {
+        index = operation.length;
+      } else if (operation.key == Operation.insertKey) {
+        if (operation.data is String) {
+          final str = operation.data.toString();
+          // Attribute가 tag 또는 hashtag 일 경우 스페이스가 포함되면 Attribute 삭제
+          if (isContain && space.hasMatch(str)) {
+            if (index != null) {
+              formatText(
+                index,
+                index + 1,
+                Attribute.clone(
+                  attribute, null
+                )
+              );
+            }
+            return;
+          }
+
+          index ??= 0;
+          if (index < textLength - 2) {
+            final text = document.toPlainText().substring(index, textLength - 1);
+
+            if (checkRegExp.hasMatch(text) && !isContain) {
+              replaceText(
+                index,
+                text.length,
+                ' $text ',
+                TextSelection.collapsed(
+                  offset: index
+                )
+              );
+
+              formatText(
+                index,
+                index + text.length,
+                attribute
+              );
+              break;
+            }
+          } else {
+            var startRegExp = startTag;
+            final isHashtag = startHashTag.hasMatch(str);
+
+            if (isHashtag) {
+              startRegExp = startHashTag;
+            }
+
+            if (startRegExp.hasMatch(str) && !isContain) {
+              formatText(
+                index,
+                index + 1,
+                attribute
+              );
+              break;
+            }
+          }
+        }
+        index = null;
+      } else if (operation.key == Operation.deleteKey) {
+        final operaions = document.toDelta().toList();
+
+        for (final tmpOperation in operaions) {
+          final hasTag = tmpOperation.hasAttribute(Attribute.tag.key);
+          final hasHashtag = tmpOperation.hasAttribute(Attribute.hashtag.key);
+
+          if (hasTag || hasHashtag) {
+            final plainText = document.toPlainText();
+
+            if (tmpOperation.data is String) {
+              final operaionData = tmpOperation.data as String;
+              final index = plainText.indexOf(operaionData);
+              final offset = selection.baseOffset;
+
+              if (index <= offset && offset <= index + operaionData.length) {
+                replaceText(
+                  index,
+                  operaionData.length,
+                  '',
+                  TextSelection.collapsed(
+                    offset: index
+                  )
+                );
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }

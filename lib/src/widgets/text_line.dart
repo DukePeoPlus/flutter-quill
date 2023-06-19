@@ -329,6 +329,8 @@ class _TextLineState extends State<TextLine> {
     final color = textNode.style.attributes[Attribute.color.key];
 
     <String, TextStyle?>{
+      Attribute.tag.key: defaultStyles.tag,
+      Attribute.hashtag.key: defaultStyles.tag,
       Attribute.bold.key: defaultStyles.bold,
       Attribute.italic.key: defaultStyles.italic,
       Attribute.small.key: defaultStyles.small,
@@ -347,6 +349,8 @@ class _TextLineState extends State<TextLine> {
         } else if (k == Attribute.link.key && !isLink) {
           // null value for link should be ignored
           // i.e. nodeStyle.attributes[Attribute.link.key]!.value == null
+        } else if (k == Attribute.tag.key || k == Attribute.hashtag.key) {
+          res = defaultStyles.tag!;
         } else {
           res = _merge(res, s!);
         }
