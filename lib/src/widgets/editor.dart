@@ -197,6 +197,7 @@ class QuillEditor extends StatefulWidget {
   factory QuillEditor.basic({
     required QuillController controller,
     required bool readOnly,
+    FocusNode? focusNode,
     Brightness? keyboardAppearance,
     Iterable<EmbedBuilder>? embedBuilders,
 
@@ -208,7 +209,7 @@ class QuillEditor extends StatefulWidget {
       controller: controller,
       scrollController: ScrollController(),
       scrollable: true,
-      focusNode: FocusNode(),
+      focusNode: focusNode ?? FocusNode(),
       autoFocus: true,
       readOnly: readOnly,
       expands: false,

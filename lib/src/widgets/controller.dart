@@ -420,6 +420,22 @@ class QuillController extends ChangeNotifier {
   // Notify toolbar buttons directly with attributes
   Map<String, Attribute> toolbarButtonToggler = {};
 
+  /// onSubmitted
+  /// 
+  /// 줄띄움 감지
+  /// 
+  /// Duke Jeon (duke@peoplus.studio)
+  bool onSubmitted(DocChange event) {
+    for (final operation in event.change.toList()) {
+      if (operation.isInsert) {
+        if (operation.data == '\n') {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   /// setTag
   /// 
   /// changes.listen 내에서 Tag 감지
