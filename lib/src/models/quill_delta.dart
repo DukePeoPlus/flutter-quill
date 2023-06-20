@@ -607,7 +607,7 @@ class Delta {
   }
 
   /// Removes trailing '\n'
-  void trimNewLine() {
+  void _trimNewLine() {
     if (isNotEmpty) {
       final lastOp = _operations.last;
       final lastOpData = lastOp.data;
@@ -626,7 +626,7 @@ class Delta {
   Delta concat(Delta other, {bool trimNewLine = false}) {
     final result = Delta.from(this);
     if (trimNewLine) {
-      result.trimNewLine();
+      result._trimNewLine();
     }
     if (other.isNotEmpty) {
       // In case first operation of other can be merged with last operation in

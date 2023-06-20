@@ -422,15 +422,31 @@ class QuillController extends ChangeNotifier {
 
   /// isSubmitted
   /// 
-  /// 줄띄움 감지
+  /// 줄띄움 감지 및 newLine 삭제
   /// 
   /// Duke Jeon (duke@peoplus.studio)
-  bool isSubmitted(DocChange event) {
-    for (final operation in event.change.toList()) {
-      if (operation.isInsert) {
-        if (operation.data == '\n') {
-          return true;
+  bool isSubmitted(DocChange event, {bool trimNewLine = false}) {
+    final operation = event.change.toList().last;
+    
+    if (operation.isInsert) {
+      if (operation.data == '\n') {
+        if (trimNewLine) {
+          var index = document.toPlainText().lastIndexOf('\n') - 1;
+
+          if (index < 0) {
+            index = 0;
+          }
+
+          replaceText(
+            index,
+            1,
+            '',
+            TextSelection.collapsed(
+              offset: index
+            )
+          );
         }
+        return true;
       }
     }
     return false;
