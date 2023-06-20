@@ -19,6 +19,9 @@ class SelectHeaderStyleButton extends StatefulWidget {
       Attribute.h1,
       Attribute.h2,
       Attribute.h3,
+      Attribute.h4,
+      Attribute.h5,
+      Attribute.h6,
     ],
     this.afterButtonPressed,
     this.tooltip,
@@ -48,6 +51,9 @@ class _SelectHeaderStyleButtonState extends State<SelectHeaderStyleButton> {
     Attribute.h1: 'H1',
     Attribute.h2: 'H2',
     Attribute.h3: 'H3',
+    Attribute.h4: 'H4',
+    Attribute.h5: 'H5',
+    Attribute.h6: 'H6',
   };
 
   @override

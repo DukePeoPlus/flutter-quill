@@ -173,6 +173,12 @@ class Attribute<T> {
 
   static const Attribute<int?> h3 = HeaderAttribute(level: 3);
 
+  static const Attribute<int?> h4 = HeaderAttribute(level: 4);
+
+  static const Attribute<int?> h5 = HeaderAttribute(level: 5);
+  
+  static const Attribute<int?> h6 = HeaderAttribute(level: 6);
+
   // "attributes":{"align":"left"}
   static const Attribute<String?> leftAlignment = AlignAttribute('left');
 
