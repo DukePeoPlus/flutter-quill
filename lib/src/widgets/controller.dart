@@ -425,7 +425,11 @@ class QuillController extends ChangeNotifier {
   /// 줄띄움 감지 및 newLine 삭제
   /// 
   /// Duke Jeon (duke@peoplus.studio)
-  bool isSubmitted(DocChange event, {bool trimNewLine = false}) {
+  bool isSubmitted(
+    DocChange event, {
+      bool trimNewLine = false
+    }
+  ) {
     final operation = event.change.toList().last;
     
     if (operation.isInsert) {
