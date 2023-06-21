@@ -612,25 +612,25 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
     bool showSuperscript = false,
 
     // isText
-    bool showFontFamily = true,
-    bool showFontSize = true,
-    bool showBoldButton = true,
-    bool showItalicButton = true,
-    bool showUnderLineButton = true,
-    bool showStrikeThrough = true,
+    bool showFontFamily = false,
+    bool showFontSize = false,
+    bool showBoldButton = false,
+    bool showItalicButton = false,
+    bool showUnderLineButton = false,
+    bool showStrikeThrough = false,
     bool showInlineCode = false,
     bool showCodeBlock = false,
     bool showHeaderStyle = false,
     
     // isList
     bool showAlignmentButtons = false,
-    bool showLeftAlignment = true,
-    bool showCenterAlignment = true,
-    bool showRightAlignment = true,
-    bool showJustifyAlignment = true,
-    bool showListNumbers = true,
-    bool showListBullets = true,
-    bool showListCheck = true,
+    bool showLeftAlignment = false,
+    bool showCenterAlignment = false,
+    bool showRightAlignment = false,
+    bool showJustifyAlignment = false,
+    bool showListNumbers = false,
+    bool showListBullets = false,
+    bool showListCheck = false,
 
     List<QuillCustomButton> customButtons = const [],
 
@@ -683,8 +683,8 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
     Key? key,
   }) {
     if (isText) {
-      showFontFamily = true;
-      showFontSize = true;
+      showFontFamily = false;
+      showFontSize = false;
       showBoldButton = true;
       showItalicButton = true;
       showUnderLineButton = true;
