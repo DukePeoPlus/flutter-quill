@@ -438,7 +438,7 @@ class QuillController extends ChangeNotifier {
           final length = document.toPlainText().length;
           var index = document.toPlainText().lastIndexOf('\n') - 1;
 
-          if (index == length - 2) {
+          if (index == length - 1) {
             if (index < 0) {
               index = 0;
             }
