@@ -49,7 +49,9 @@ class _ArrowIndicatedButtonListState extends State<ArrowIndicatedButtonList>
 
   List<Widget> buttons() {
     return widget.buttons.map((e) {
-      if (widget.buttons.last != e) {
+      final index = widget.buttons.indexOf(e);
+
+      if (widget.buttons.length - 1 != index) {
         return Padding(
           padding: EdgeInsets.only(
             right: widget.axis == Axis.horizontal
