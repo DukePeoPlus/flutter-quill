@@ -798,6 +798,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
       toolbarIconAlignment: toolbarIconAlignment,
       toolbarIconCrossAlignment: toolbarIconCrossAlignment,
       multiRowsDisplay: multiRowsDisplay,
+      hasMinSize: hasMinSize,
       customButtons: customButtons,
       locale: locale,
       afterButtonPressed: afterButtonPressed,
