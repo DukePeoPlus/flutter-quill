@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:quiver/collection.dart';
 
 /// Scrollable list with arrow indicators.
 ///
