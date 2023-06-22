@@ -58,6 +58,8 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
     this.toolbarIconCrossAlignment = WrapCrossAlignment.center,
     this.multiRowsDisplay = true,
     this.hasMinSize = false,
+    this.hasArrow = true,
+    this.toolbarSectionPadding = 0,
     this.color,
     this.customButtons = const [],
     this.locale,
@@ -1141,10 +1143,12 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
   final Axis axis;
   final double toolbarSize;
   final double toolbarSectionSpacing;
+  final double toolbarSectionPadding;
   final WrapAlignment toolbarIconAlignment;
   final WrapCrossAlignment toolbarIconCrossAlignment;
   final bool multiRowsDisplay;
   final bool hasMinSize;
+  final bool hasArrow;
 
   /// The color of the toolbar.
   ///
@@ -1178,26 +1182,28 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
     return I18n(
       initialLocale: locale,
       child: multiRowsDisplay
-          ? Wrap(
-              direction: axis,
-              alignment: toolbarIconAlignment,
-              crossAxisAlignment: toolbarIconCrossAlignment,
-              runSpacing: 4,
-              spacing: toolbarSectionSpacing,
-              children: children,
-            )
-          : Container(
-              constraints: BoxConstraints.tightFor(
-                height: axis == Axis.horizontal ? toolbarSize : null,
-                width: axis == Axis.vertical ? toolbarSize : null,
-              ),
-              color: color ?? Theme.of(context).canvasColor,
-              child: ArrowIndicatedButtonList(
-                axis: axis,
-                buttons: children,
-                hasMinSize: hasMinSize,
-              ),
+        ? Wrap(
+            direction: axis,
+            alignment: toolbarIconAlignment,
+            crossAxisAlignment: toolbarIconCrossAlignment,
+            runSpacing: 4,
+            spacing: toolbarSectionSpacing,
+            children: children,
+          )
+        : Container(
+            constraints: BoxConstraints.tightFor(
+              height: axis == Axis.horizontal ? toolbarSize : null,
+              width: axis == Axis.vertical ? toolbarSize : null,
             ),
+            color: color ?? Theme.of(context).canvasColor,
+            child: ArrowIndicatedButtonList(
+              axis: axis,
+              buttons: children,
+              hasMinSize: hasMinSize,
+              hasArrow: hasArrow,
+              padding: toolbarSectionPadding,
+            ),
+          ),
     );
   }
 }

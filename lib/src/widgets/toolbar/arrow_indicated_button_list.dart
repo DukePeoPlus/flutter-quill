@@ -10,13 +10,17 @@ class ArrowIndicatedButtonList extends StatefulWidget {
   const ArrowIndicatedButtonList({
     required this.axis,
     required this.buttons,
-    this.hasMinSize = false,
+    required this.hasArrow,
+    required this.hasMinSize,
+    this.padding = 0,
     Key? key,
   }) : super(key: key);
 
   final Axis axis;
   final List<Widget> buttons;
   final bool hasMinSize;
+  final bool hasArrow;
+  final double padding;
 
   @override
   _ArrowIndicatedButtonListState createState() =>
@@ -46,11 +50,17 @@ class _ArrowIndicatedButtonListState extends State<ArrowIndicatedButtonList>
 
   @override
   Widget build(BuildContext context) {
-    final children = <Widget>[
+    var children = <Widget>[
       _buildBackwardArrow(),
       _buildScrollableList(),
       _buildForwardArrow(),
     ];
+
+    if (!widget.hasArrow && widget.padding == 0) {
+      children = [
+        _buildScrollableList(),
+      ];
+    }
 
     return widget.axis == Axis.horizontal
         ? Row(
