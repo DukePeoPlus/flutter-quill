@@ -432,7 +432,7 @@ class QuillController extends ChangeNotifier {
   ) {
     final operation = event.change.toList().last;
     
-    if (operation.isInsert) {
+    if (operation.isInsert || operation.isRetain) {
       if (operation.data == '\n') {
         if (trimNewLine) {
           final length = document.toPlainText().length;
@@ -451,9 +451,9 @@ class QuillController extends ChangeNotifier {
                 offset: index
               )
             );
+            return true;
           }
         }
-        return true;
       }
     }
     return false;
