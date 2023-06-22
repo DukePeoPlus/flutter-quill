@@ -57,6 +57,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
     this.toolbarIconAlignment = WrapAlignment.center,
     this.toolbarIconCrossAlignment = WrapCrossAlignment.center,
     this.multiRowsDisplay = true,
+    this.hasMinSize = false,
     this.color,
     this.customButtons = const [],
     this.locale,
@@ -592,6 +593,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
     WrapAlignment toolbarIconAlignment = WrapAlignment.center,
     WrapCrossAlignment toolbarIconCrossAlignment = WrapCrossAlignment.center,
     bool multiRowsDisplay = false,
+    bool hasMinSize = false,
     bool isText = true,
     bool isList = false,
     
@@ -1141,6 +1143,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
   final WrapAlignment toolbarIconAlignment;
   final WrapCrossAlignment toolbarIconCrossAlignment;
   final bool multiRowsDisplay;
+  final bool hasMinSize;
 
   /// The color of the toolbar.
   ///
@@ -1191,6 +1194,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
               child: ArrowIndicatedButtonList(
                 axis: axis,
                 buttons: children,
+                hasMinSize: hasMinSize,
               ),
             ),
     );

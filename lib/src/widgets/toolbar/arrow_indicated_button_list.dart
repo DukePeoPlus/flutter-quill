@@ -10,11 +10,13 @@ class ArrowIndicatedButtonList extends StatefulWidget {
   const ArrowIndicatedButtonList({
     required this.axis,
     required this.buttons,
+    this.hasMinSize = false,
     Key? key,
   }) : super(key: key);
 
   final Axis axis;
   final List<Widget> buttons;
+  final bool hasMinSize;
 
   @override
   _ArrowIndicatedButtonListState createState() =>
@@ -52,9 +54,15 @@ class _ArrowIndicatedButtonListState extends State<ArrowIndicatedButtonList>
 
     return widget.axis == Axis.horizontal
         ? Row(
+            mainAxisSize: widget.hasMinSize
+              ? MainAxisSize.min
+              : MainAxisSize.max,
             children: children,
           )
         : Column(
+            mainAxisSize: widget.hasMinSize
+              ? MainAxisSize.min
+              : MainAxisSize.max,
             children: children,
           );
   }
