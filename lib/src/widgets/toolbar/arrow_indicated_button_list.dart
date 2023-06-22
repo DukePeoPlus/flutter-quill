@@ -119,17 +119,22 @@ class _ArrowIndicatedButtonListState extends State<ArrowIndicatedButtonList>
         child: CustomScrollView(
           scrollDirection: widget.axis,
           controller: _controller,
+          shrinkWrap: widget.hasMinSize,
           physics: const ClampingScrollPhysics(),
           slivers: [
             SliverFillRemaining(
               hasScrollBody: false,
               child: widget.axis == Axis.horizontal
                   ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: widget.hasMinSize
+                        ? MainAxisAlignment.start
+                        : MainAxisAlignment.spaceEvenly,
                       children: widget.buttons,
                     )
                   : Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: widget.hasMinSize
+                        ? MainAxisAlignment.start
+                        : MainAxisAlignment.spaceEvenly,
                       children: widget.buttons,
                     ),
             )
