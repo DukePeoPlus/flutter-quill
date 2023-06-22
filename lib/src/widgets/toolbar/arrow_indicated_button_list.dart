@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:quiver/collection.dart';
 
 /// Scrollable list with arrow indicators.
 ///
@@ -48,6 +49,26 @@ class _ArrowIndicatedButtonListState extends State<ArrowIndicatedButtonList>
     Timer.run(_handleScroll);
   }
 
+  List<Widget> buttons() {
+    return widget.buttons.map((e) {
+      if (widget.buttons.last != e) {
+        return e = Padding(
+          padding: EdgeInsets.only(
+            right: widget.axis == Axis.horizontal
+              ? widget.padding
+              : 0,
+            bottom: widget.axis != Axis.horizontal
+              ? widget.padding
+              : 0,
+          ),
+          child: e
+        );
+      } else {
+        return e;
+      }
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     var children = <Widget>[
@@ -56,7 +77,7 @@ class _ArrowIndicatedButtonListState extends State<ArrowIndicatedButtonList>
       _buildForwardArrow(),
     ];
 
-    if (!widget.hasArrow && widget.padding == 0) {
+    if (!widget.hasArrow) {
       children = [
         _buildScrollableList(),
       ];
@@ -139,13 +160,13 @@ class _ArrowIndicatedButtonListState extends State<ArrowIndicatedButtonList>
                       mainAxisAlignment: widget.hasMinSize
                         ? MainAxisAlignment.start
                         : MainAxisAlignment.spaceEvenly,
-                      children: widget.buttons,
+                      children: buttons()
                     )
                   : Column(
                       mainAxisAlignment: widget.hasMinSize
                         ? MainAxisAlignment.start
                         : MainAxisAlignment.spaceEvenly,
-                      children: widget.buttons,
+                      children: buttons()
                     ),
             )
           ],
