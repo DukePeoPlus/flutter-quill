@@ -592,6 +592,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
     Axis axis = Axis.horizontal,
     double toolbarIconSize = kDefaultIconSize,
     double toolbarSectionSpacing = kToolbarSectionSpacing,
+    double toolbarSectionPadding = 0,
     WrapAlignment toolbarIconAlignment = WrapAlignment.center,
     WrapCrossAlignment toolbarIconCrossAlignment = WrapCrossAlignment.center,
     bool multiRowsDisplay = false,
