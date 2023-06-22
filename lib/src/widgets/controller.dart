@@ -435,20 +435,23 @@ class QuillController extends ChangeNotifier {
     if (operation.isInsert) {
       if (operation.data == '\n') {
         if (trimNewLine) {
+          final length = document.toPlainText().length;
           var index = document.toPlainText().lastIndexOf('\n') - 1;
 
-          if (index < 0) {
-            index = 0;
-          }
+          if (index == length - 2) {
+            if (index < 0) {
+              index = 0;
+            }
 
-          replaceText(
-            index,
-            1,
-            '',
-            TextSelection.collapsed(
-              offset: index
-            )
-          );
+            replaceText(
+              index,
+              1,
+              '',
+              TextSelection.collapsed(
+                offset: index
+              )
+            );
+          }
         }
         return true;
       }
