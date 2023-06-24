@@ -430,29 +430,43 @@ class QuillController extends ChangeNotifier {
       bool trimNewLine = false
     }
   ) {
-    final operation = event.change.toList().last;
+final current = event.change.toList().last;
+    var before = event.change.toList().last;
+    final eventLength = event.change.toList().length;
+    if (eventLength > 1) {
+      before = event.change.toList()[eventLength - 2];
+    }
     
-    if (operation.isInsert || operation.isRetain) {
-      if (operation.data == '\n') {
-        if (trimNewLine) {
-          final length = document.toPlainText().length;
-          var index = document.toPlainText().lastIndexOf('\n') - 1;
+    final isCurrentNewLine = current.isInsert && current.data == '\n';
+    final isBeforeNewLine = before.isInsert && before.data == '\n';
+    
+    if (isCurrentNewLine || isBeforeNewLine) {
+      if (trimNewLine) {
+        final length = document.toPlainText().length;
+        var index = document.toPlainText().lastIndexOf('\n') - 1;
+        var removeLength = 1;
 
-          if (index == length - 1) {
-            if (index < 0) {
-              index = 0;
-            }
-
-            replaceText(
-              index,
-              1,
-              '',
-              TextSelection.collapsed(
-                offset: index
-              )
-            );
-            return true;
+        if (isBeforeNewLine) {
+          index = document.toPlainText().lastIndexOf('') - 1;
+          if (length >= 2) {
+            removeLength = 2;
           }
+        }
+
+        if (index == length - 1) {
+          if (index < 0) {
+            index = 0;
+          }
+
+          replaceText(
+            index,
+            removeLength,
+            '',
+            TextSelection.collapsed(
+              offset: index
+            )
+          );
+          return true;
         }
       }
     }
