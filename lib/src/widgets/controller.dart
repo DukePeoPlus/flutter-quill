@@ -427,12 +427,12 @@ class QuillController extends ChangeNotifier {
   /// Duke Jeon (duke@peoplus.studio)
   bool isSubmitted(
     DocChange event, {
-      bool trimNewLine = false
+      bool hasTrimNewLine = false
     }
   ) {
-final current = event.change.toList().last;
-    var before = event.change.toList().last;
+    final current = event.change.toList().last;
     final eventLength = event.change.toList().length;
+    var before = event.change.toList().last;
     if (eventLength > 1) {
       before = event.change.toList()[eventLength - 2];
     }
@@ -441,34 +441,46 @@ final current = event.change.toList().last;
     final isBeforeNewLine = before.isInsert && before.data == '\n';
     
     if (isCurrentNewLine || isBeforeNewLine) {
-      if (trimNewLine) {
-        final length = document.toPlainText().length;
-        var index = document.toPlainText().lastIndexOf('\n') - 1;
-        var removeLength = 1;
-
-        if (isBeforeNewLine) {
-          index = document.toPlainText().lastIndexOf('') - 1;
-          if (length >= 2) {
-            removeLength = 2;
-          }
-        }
-
-        if (index == length - 1) {
-          if (index < 0) {
-            index = 0;
-          }
-
-          replaceText(
-            index,
-            removeLength,
-            '',
-            TextSelection.collapsed(
-              offset: index
-            )
-          );
-          return true;
-        }
+      if (hasTrimNewLine) {
+        return trimNewLine(isBeforeNewLine: isBeforeNewLine);
       }
+    }
+    return false;
+  }
+
+  /// trimNewLine
+  /// 
+  /// 줄띄움 삭제
+  /// 
+  /// Duke Jeon (duke@peoplus.studio)
+  bool trimNewLine({
+    bool isBeforeNewLine = false
+  }) {
+    final length = document.toPlainText().length;
+    var index = document.toPlainText().lastIndexOf('\n') - 1;
+    var removeLength = 1;
+
+    if (isBeforeNewLine) {
+      index = document.toPlainText().lastIndexOf('') - 1;
+      if (length >= 2) {
+        removeLength = 2;
+      }
+    }
+
+    if (index == length - 1) {
+      if (index < 0) {
+        index = 0;
+      }
+
+      replaceText(
+        index,
+        removeLength,
+        '',
+        TextSelection.collapsed(
+          offset: index
+        )
+      );
+      return true;
     }
     return false;
   }
