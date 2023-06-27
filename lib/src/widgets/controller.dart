@@ -121,7 +121,9 @@ class QuillController extends ChangeNotifier {
       return;
     }
     if (isIncrease) {
-      formatSelection(Attribute.getIndentLevel(indent.value + 1));
+      if (indent.value <= 2) {
+        formatSelection(Attribute.getIndentLevel(indent.value + 1));
+      }
       return;
     }
     formatSelection(Attribute.getIndentLevel(indent.value - 1));

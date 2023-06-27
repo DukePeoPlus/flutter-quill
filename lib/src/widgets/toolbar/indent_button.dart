@@ -46,6 +46,7 @@ class _IndentButtonState extends State<IndentButton> {
       icon: Icon(widget.icon, size: widget.iconSize, color: iconColor),
       fillColor: iconFillColor,
       borderRadius: widget.iconTheme?.borderRadius ?? 2,
+      border: widget.iconTheme?.border,
       onPressed: () {
         widget.controller.indentSelection(widget.isIncrease);
       },
