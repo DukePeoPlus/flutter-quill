@@ -151,6 +151,8 @@ Widget defaultToggleStyleButtonBuilder(
               theme.canvasColor) //Unselected icon fill color :
       : (iconTheme?.disabledIconFillColor ??
           (fillColor ?? theme.canvasColor)); //Disabled icon fill color
+  final border = iconTheme?.border;
+
   return QuillIconButton(
     highlightElevation: 0,
     hoverElevation: 0,
@@ -160,5 +162,6 @@ Widget defaultToggleStyleButtonBuilder(
     onPressed: onPressed,
     afterPressed: afterPressed,
     borderRadius: iconTheme?.borderRadius ?? 2,
+    border: border,
   );
 }

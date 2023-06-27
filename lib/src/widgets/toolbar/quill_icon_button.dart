@@ -13,6 +13,7 @@ class QuillIconButton extends StatelessWidget {
     this.highlightElevation = 1,
     this.borderRadius = 2,
     this.tooltip,
+    this.border,
     Key? key,
   }) : super(key: key);
 
@@ -24,6 +25,7 @@ class QuillIconButton extends StatelessWidget {
   final double hoverElevation;
   final double highlightElevation;
   final double borderRadius;
+  final BoxBorder? border;
   final String? tooltip;
 
   @override
@@ -32,19 +34,24 @@ class QuillIconButton extends StatelessWidget {
       constraints: BoxConstraints.tightFor(width: size, height: size),
       child: UtilityWidgets.maybeTooltip(
         message: tooltip,
-        child: RawMaterialButton(
-          visualDensity: VisualDensity.compact,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(borderRadius)),
-          fillColor: fillColor,
-          elevation: 0,
-          hoverElevation: hoverElevation,
-          highlightElevation: hoverElevation,
-          onPressed: () {
-            onPressed?.call();
-            afterPressed?.call();
-          },
-          child: icon,
+        child: Container(
+          decoration: BoxDecoration(
+            border: border,
+          ),
+          child: RawMaterialButton(
+            visualDensity: VisualDensity.compact,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(borderRadius)),
+            fillColor: fillColor,
+            elevation: 0,
+            hoverElevation: hoverElevation,
+            highlightElevation: hoverElevation,
+            onPressed: () {
+              onPressed?.call();
+              afterPressed?.call();
+            },
+            child: icon,
+          ),
         ),
       ),
     );
