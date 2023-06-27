@@ -701,14 +701,10 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
     }
 
     if (isList) {
-      showAlignmentButtons = false;
-      showLeftAlignment = true;
-      showCenterAlignment = true;
-      showRightAlignment = true;
-      showJustifyAlignment = true;
-      showListNumbers = true;
-      showListBullets = true;
-      showListCheck = true;
+      showIndent = true;
+      showListNumbers = false;
+      showListBullets = false;
+      showListCheck = false;
     }
 
     final isButtonGroupShown = [
