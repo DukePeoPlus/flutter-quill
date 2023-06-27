@@ -37,6 +37,7 @@ class QuillIconButton extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             border: border,
+            borderRadius: BorderRadius.circular(borderRadius)
           ),
           child: RawMaterialButton(
             visualDensity: VisualDensity.compact,
