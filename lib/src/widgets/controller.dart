@@ -461,7 +461,14 @@ class QuillController extends ChangeNotifier {
         if (length > 1) {
           if (indentValue == 0) {
             if (onEditingComplete != null) {
-              if (currentIndentValue != null) {
+              final trimNewLineCondition = currentIndentValue == null 
+                && beforeIndentValue == null
+                && tmpCurrentAttr != attr.value
+                && tmpBeforeAttr == attr.value
+                && indentValue == 0
+                || currentIndentValue != null;
+
+              if (trimNewLineCondition) {
                 final isBeforeNewLine = before.isInsert && before.data == '\n';
                 trimNewLine(isBeforeNewLine: isBeforeNewLine);
                 onEditingComplete();
@@ -478,7 +485,8 @@ class QuillController extends ChangeNotifier {
       } else if (before.data == '\n\n') {
         if (indentValue == 0) {
           final increaseCondition = tmpCurrentAttr != attr.value
-            && tmpBeforeAttr == attr.value;
+            && tmpBeforeAttr == attr.value
+            && !current.hasAttribute(Attribute.indent.key);
 
           final decreaseCondition = currentIndentValue == null
             && beforeIndentValue == 2
@@ -509,9 +517,9 @@ class QuillController extends ChangeNotifier {
             formatSelection(attr);
             formatSelection(Attribute.getIndentLevel(indentValue + 1));
           }
-        } else if (tmpCurrentAttr != attr.value && indentValue == 2) {
+        } else if (tmpCurrentAttr != attr.value && beforeIndentValue != 1) {
           formatSelection(attr);
-          formatSelection(Attribute.getIndentLevel(1));
+          formatSelection(Attribute.getIndentLevel(indentValue - 1));
         }
       } else if (before.data == '\n') {
         if (indentValue == 1) {
@@ -542,6 +550,18 @@ class QuillController extends ChangeNotifier {
           }
         } else if (tmpCurrentAttr != attr.value && indentValue == 2) {
           formatSelection(attr);
+        } else if (indentValue == 0) {
+          final trimNewLineCondition = currentIndentValue == null 
+            && beforeIndentValue == 0
+            && currentIndentValue == null
+            && tmpCurrentAttr == attr.value
+            && tmpBeforeAttr == attr.value;
+
+          if (trimNewLineCondition) {
+            final isBeforeNewLine = before.isInsert && before.data == '\n';
+            trimNewLine(isBeforeNewLine: isBeforeNewLine);
+            onEditingComplete!();
+          }
         }
       }
     }
