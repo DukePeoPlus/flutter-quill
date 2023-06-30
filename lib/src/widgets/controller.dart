@@ -120,6 +120,7 @@ class QuillController extends ChangeNotifier {
       formatSelection(Attribute.clone(Attribute.indentL1, null));
       return;
     }
+    
     if (isIncrease) {
       if (indent.value < 2) {
         formatSelection(Attribute.getIndentLevel(indent.value + 1));
@@ -422,6 +423,130 @@ class QuillController extends ChangeNotifier {
   // Notify toolbar buttons directly with attributes
   Map<String, Attribute> toolbarButtonToggler = {};
 
+  /// isSubmittedInList
+  /// 
+  /// Type이 list일때 isSubmitted 동작
+  /// 
+  /// Duke Jeon (duke@peoplus.studio)
+  void checkList(
+    DocChange event,
+    Attribute attr,{
+      Function()? onDelete,
+      Function()? onEditingComplete,
+    }) {
+    final length = event.before.toList().length;
+    final current = event.change.toList().last;
+    final before = event.before.toList().last;
+    Operation? prevBefore;
+
+    if (length > 1) {
+      prevBefore = event.before.toList()[length - 2];
+    }
+
+    final indent = getSelectionStyle().attributes[Attribute.indent.key];
+    final tmpCurrentAttr = current.attributes?['list'];
+    final tmpBeforeAttr = before.attributes?['list'];
+    final currentIndentValue = current.attributes?['indent'];
+    final beforeIndentValue = before.attributes?['indent'];
+
+    final functionCondition = indent?.value == null 
+      && current.attributes?['list'] == null 
+      && before.data == '\n'
+      && before.attributes?['list'] == attr.value;
+
+    final indentValue = indent?.value ?? 0;
+
+    if (current.isRetain && before.isInsert) {
+      if (functionCondition) {
+        if (length > 1) {
+          if (indentValue == 0) {
+            if (onEditingComplete != null) {
+              if (currentIndentValue != null) {
+                final isBeforeNewLine = before.isInsert && before.data == '\n';
+                trimNewLine(isBeforeNewLine: isBeforeNewLine);
+                onEditingComplete();
+              } else {
+                formatSelection(attr);
+              }
+            }
+          }
+        } else {
+          if (onDelete != null) {
+            onDelete();
+          }
+        }
+      } else if (before.data == '\n\n') {
+        if (indentValue == 0) {
+          final increaseCondition = tmpCurrentAttr != attr.value
+            && tmpBeforeAttr == attr.value;
+
+          final decreaseCondition = currentIndentValue == null
+            && beforeIndentValue == 2
+            && tmpCurrentAttr == attr.value
+            && tmpBeforeAttr == attr.value;
+
+          if (decreaseCondition) {
+            formatSelection(attr);
+            formatSelection(Attribute.getIndentLevel(1));
+          } else if (increaseCondition) {
+            formatSelection(attr);
+            formatSelection(Attribute.getIndentLevel(indentValue + 1));
+          }
+        } else if (indentValue == 1) {
+          final decreaseCondition = currentIndentValue == null
+            && beforeIndentValue == 2
+            && tmpCurrentAttr == attr.value
+            && tmpBeforeAttr == attr.value;
+
+          final increaseCondition = currentIndentValue == 1
+            && beforeIndentValue == 1
+            && tmpCurrentAttr != attr.value
+            && tmpBeforeAttr == attr.value;
+          if (decreaseCondition) {
+            formatSelection(attr);
+            formatSelection(Attribute.getIndentLevel(indentValue - 1));
+          } else if (increaseCondition) {
+            formatSelection(attr);
+            formatSelection(Attribute.getIndentLevel(indentValue + 1));
+          }
+        } else if (tmpCurrentAttr != attr.value && indentValue == 2) {
+          formatSelection(attr);
+          formatSelection(Attribute.getIndentLevel(1));
+        }
+      } else if (before.data == '\n') {
+        if (indentValue == 1) {
+          final decreaseCondition = currentIndentValue == 1
+            && beforeIndentValue == 1
+            && tmpCurrentAttr != attr.value
+            && tmpBeforeAttr == attr.value
+            && prevBefore?.data == '\n';
+          final prevBeforeIndentValue = prevBefore?.attributes?['indent'];
+
+          if (decreaseCondition) {
+            if (prevBeforeIndentValue == 2) {
+              formatSelection(attr);
+              formatSelection(Attribute.getIndentLevel(0));
+            } else if (prevBeforeIndentValue == null) {
+              if (length > 1) {
+                if (onEditingComplete != null) {
+                  final isBeforeNewLine = before.isInsert && before.data == '\n';
+                  trimNewLine(isBeforeNewLine: isBeforeNewLine);
+                  onEditingComplete();
+                }
+              } else {
+                if (onDelete != null) {
+                  onDelete();
+                }
+              }
+            }
+          }
+        } else if (tmpCurrentAttr != attr.value && indentValue == 2) {
+          formatSelection(attr);
+        }
+      }
+    }
+  }
+
   /// isSubmitted
   /// 
   /// 줄띄움 감지 및 newLine 삭제
@@ -438,7 +563,7 @@ class QuillController extends ChangeNotifier {
     if (eventLength > 1) {
       before = event.change.toList()[eventLength - 2];
     }
-    
+
     final isCurrentNewLine = current.isInsert && current.data == '\n';
     final isBeforeNewLine = before.isInsert && before.data == '\n';
     
@@ -446,6 +571,7 @@ class QuillController extends ChangeNotifier {
       if (hasTrimNewLine) {
         return trimNewLine(isBeforeNewLine: isBeforeNewLine);
       }
+      return true;
     }
     return false;
   }
