@@ -602,7 +602,8 @@ class QuillController extends ChangeNotifier {
   /// 
   /// Duke Jeon (duke@peoplus.studio)
   bool trimNewLine({
-    bool isBeforeNewLine = false
+    bool isBeforeNewLine = false,
+    bool isCheckList = true,
   }) {
     final length = document.toPlainText().length;
     var index = document.toPlainText().lastIndexOf('\n') - 1;
@@ -611,15 +612,15 @@ class QuillController extends ChangeNotifier {
     if (isBeforeNewLine) {
       index = document.toPlainText().lastIndexOf('') - 1;
       if (length >= 2) {
-        removeLength = 2;
+        if (isCheckList) {
+          removeLength = 2;
+        } else {
+          removeLength = 1;
+        }
       }
     }
 
-    if (index == length - 1) {
-      if (index < 0) {
-        index = 0;
-      }
-
+    if (index > 0 && index == length - 1) {
       replaceText(
         index,
         removeLength,
