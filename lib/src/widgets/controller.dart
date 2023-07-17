@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
 
 import '../models/documents/attribute.dart';
 import '../models/documents/document.dart';
@@ -759,5 +760,13 @@ class QuillController extends ChangeNotifier {
         }
       }
     }
+  }
+
+  String toHtml() {
+    final converter = QuillDeltaToHtmlConverter(
+      List.castFrom(_document.toDelta().toJson()),
+    );
+
+    return converter.convert();
   }
 }
