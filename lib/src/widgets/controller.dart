@@ -669,6 +669,12 @@ class QuillController extends ChangeNotifier {
       } else if (operation.key == Operation.insertKey) {
         if (operation.data is String) {
           final str = operation.data.toString();
+
+          if (str.startsWith(startHashTag)) {
+            attribute = Attribute.hashtag;
+            checkRegExp = checkHashTag;
+          }
+
           // Attribute가 tag 또는 hashtag 일 경우 스페이스가 포함되면 Attribute 삭제
           if (isContain && space.hasMatch(str)) {
             if (index != null) {
