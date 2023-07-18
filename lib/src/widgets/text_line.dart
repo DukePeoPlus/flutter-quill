@@ -330,7 +330,7 @@ class _TextLineState extends State<TextLine> {
       Style nodeStyle, Style lineStyle, bool isLink) {
     var res = const TextStyle(); // This is inline text style
     final color = textNode.style.attributes[Attribute.color.key];
-
+    bool isTag = false;
     <String, TextStyle?>{
       Attribute.tag.key: defaultStyles.tag,
       Attribute.hashtag.key: defaultStyles.tag,
@@ -354,11 +354,16 @@ class _TextLineState extends State<TextLine> {
           // i.e. nodeStyle.attributes[Attribute.link.key]!.value == null
         } else if (k == Attribute.tag.key || k == Attribute.hashtag.key) {
           res = defaultStyles.tag!;
+          isTag = true;
         } else {
           res = _merge(res, s!);
         }
       }
     });
+
+    if (isTag) {
+      return defaultStyles.tag!;
+    }
 
     if (nodeStyle.containsKey(Attribute.script.key)) {
       if (nodeStyle.attributes.values.contains(Attribute.subscript)) {
