@@ -680,8 +680,14 @@ class QuillController extends ChangeNotifier {
           if (isContain && space.hasMatch(str)) {
             if (index != null) {
               formatText(
-                index,
                 index + 1,
+                index + 1,
+                Attribute.clone(
+                  attribute, null
+                )
+              );
+
+              formatSelection(
                 Attribute.clone(
                   attribute, null
                 )
