@@ -48,6 +48,12 @@ class Attribute<T> {
     Attribute.script.key: Attribute.script,
     Attribute.image.key: Attribute.image,
     Attribute.video.key: Attribute.video,
+    'h1': Attribute.h1,
+    'h2': Attribute.h2,
+    'h3': Attribute.h3,
+    'h4': Attribute.h4,
+    'h5': Attribute.h5,
+    'h6': Attribute.h6,
   });
 
   static const TagAttribute tag = TagAttribute();
@@ -241,6 +247,11 @@ class Attribute<T> {
     }
     final attribute = clone(origin, value);
     return attribute;
+  }
+
+  static Attribute? getValueFromKey(String key) {
+    final origin = _registry[key];
+    return origin;
   }
 
   static int getRegistryOrder(Attribute attribute) {
