@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-
 import '../../models/documents/attribute.dart';
 
 class QuillBulletPoint extends StatelessWidget {
-  QuillBulletPoint({
+  const QuillBulletPoint({
     required this.index,
     required this.indentLevelCounts,
     required this.count,
@@ -21,7 +20,7 @@ class QuillBulletPoint extends StatelessWidget {
   final double width;
   final Map<String, Attribute> attrs;
   final double padding;
-  final List<String> bullets = [
+  static final List<String> bullets = [
     '/u25CF',
     '/u25CB',
     '/u25A0',
