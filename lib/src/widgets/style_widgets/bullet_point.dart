@@ -45,7 +45,7 @@ class QuillBulletPoint extends StatelessWidget {
     final count = (indentLevelCounts[level] ?? 0) + 1;
     indentLevelCounts[level] = count;
 
-    s = bullets[count % 3];
+    s = bullets[level % 3];
     return Container(
       alignment: AlignmentDirectional.topEnd,
       width: width,
