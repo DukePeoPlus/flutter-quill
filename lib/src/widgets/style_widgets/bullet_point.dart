@@ -21,9 +21,9 @@ class QuillBulletPoint extends StatelessWidget {
   final Map<String, Attribute> attrs;
   final double padding;
   static final List<String> bullets = [
-    '/u25CF',
-    '/u25CB',
-    '/u25A0',
+    '●',
+    '○',
+    '■',
   ];
 
   @override
