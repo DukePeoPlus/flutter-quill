@@ -600,6 +600,8 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
     bool hasArrow = true,
     bool isText = true,
     bool isList = false,
+
+    VoidCallback? beforeLinkButtonPressed,
     
     // default
     bool showDividers = true,
@@ -1104,6 +1106,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
             iconSize: toolbarIconSize,
             iconTheme: iconTheme,
             dialogTheme: dialogTheme,
+            beforeButtonPressed: beforeLinkButtonPressed,
             afterButtonPressed: afterButtonPressed,
           ),
         if (showSearchButton)

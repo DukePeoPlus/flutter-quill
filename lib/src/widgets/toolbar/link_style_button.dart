@@ -16,6 +16,7 @@ class LinkStyleButton extends StatefulWidget {
     this.icon,
     this.iconTheme,
     this.dialogTheme,
+    this.beforeButtonPressed,
     this.afterButtonPressed,
     this.tooltip,
     Key? key,
@@ -26,6 +27,7 @@ class LinkStyleButton extends StatefulWidget {
   final double iconSize;
   final QuillIconTheme? iconTheme;
   final QuillDialogTheme? dialogTheme;
+  final VoidCallback? beforeButtonPressed;
   final VoidCallback? afterButtonPressed;
   final String? tooltip;
 
@@ -108,7 +110,11 @@ class _LinkStyleButtonState extends State<LinkStyleButton> {
         text ??=
             len == 0 ? '' : widget.controller.document.getPlainText(index, len);
         return _LinkDialog(
-            dialogTheme: widget.dialogTheme, link: link, text: text);
+          dialogTheme: widget.dialogTheme,
+          link: link,
+          text: text,
+          onPressed: widget.beforeButtonPressed,
+        );
       },
     ).then(
       (value) {
@@ -143,12 +149,19 @@ class _LinkStyleButtonState extends State<LinkStyleButton> {
 }
 
 class _LinkDialog extends StatefulWidget {
-  const _LinkDialog({this.dialogTheme, this.link, this.text, Key? key})
+  const _LinkDialog({
+    this.dialogTheme,
+    this.link,
+    this.text,
+    this.onPressed,
+    Key? key,
+  })
       : super(key: key);
 
   final QuillDialogTheme? dialogTheme;
   final String? link;
   final String? text;
+  final Function()? onPressed;
 
   @override
   _LinkDialogState createState() => _LinkDialogState();
@@ -239,6 +252,9 @@ class _LinkDialogState extends State<_LinkDialog> {
   }
 
   void _applyLink() {
+    if (widget.onPressed != null) {
+      widget.onPressed!();
+    }
     Navigator.pop(context, _TextLink(_text.trim(), _link.trim()));
   }
 }
