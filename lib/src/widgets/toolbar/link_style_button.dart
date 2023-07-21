@@ -19,6 +19,7 @@ class LinkStyleButton extends StatefulWidget {
     this.beforeButtonPressed,
     this.afterButtonPressed,
     this.tooltip,
+    this.customDialog,
     Key? key,
   }) : super(key: key);
 
@@ -30,6 +31,7 @@ class LinkStyleButton extends StatefulWidget {
   final VoidCallback? beforeButtonPressed;
   final VoidCallback? afterButtonPressed;
   final String? tooltip;
+  final Function(BuildContext)? customDialog;
 
   @override
   _LinkStyleButtonState createState() => _LinkStyleButtonState();
@@ -65,7 +67,15 @@ class _LinkStyleButtonState extends State<LinkStyleButton> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isToggled = _getLinkAttributeValue() != null;
-    final pressedHandler = () => _openLinkDialog(context);
+
+    late final pressedHandler;
+
+    if (widget.customDialog != null) {
+      pressedHandler = () => widget.customDialog!(context);
+    } else {
+      pressedHandler = () => _openLinkDialog(context);
+    }
+
     return QuillIconButton(
       tooltip: widget.tooltip,
       highlightElevation: 0,
@@ -90,7 +100,7 @@ class _LinkStyleButtonState extends State<LinkStyleButton> {
   }
 
   void _openLinkDialog(BuildContext context) {
-    showDialog<_TextLink>(
+    showDialog<TextLink>(
       context: context,
       builder: (ctx) {
         final link = _getLinkAttributeValue();
@@ -109,6 +119,7 @@ class _LinkStyleButtonState extends State<LinkStyleButton> {
         final len = widget.controller.selection.end - index;
         text ??=
             len == 0 ? '' : widget.controller.document.getPlainText(index, len);
+
         return _LinkDialog(
           dialogTheme: widget.dialogTheme,
           link: link,
@@ -130,7 +141,7 @@ class _LinkStyleButtonState extends State<LinkStyleButton> {
         ?.value;
   }
 
-  void _linkSubmitted(_TextLink value) {
+  void _linkSubmitted(TextLink value) {
     var index = widget.controller.selection.start;
     var length = widget.controller.selection.end - index;
     if (_getLinkAttributeValue() != null) {
@@ -156,7 +167,7 @@ class _LinkDialog extends StatefulWidget {
     this.onPressed,
     Key? key,
   })
-      : super(key: key);
+  : super(key: key);
 
   final QuillDialogTheme? dialogTheme;
   final String? link;
@@ -255,12 +266,12 @@ class _LinkDialogState extends State<_LinkDialog> {
     if (widget.onPressed != null) {
       widget.onPressed!();
     }
-    Navigator.pop(context, _TextLink(_text.trim(), _link.trim()));
+    Navigator.pop(context, TextLink(_text.trim(), _link.trim()));
   }
 }
 
-class _TextLink {
-  _TextLink(
+class TextLink {
+  TextLink(
     this.text,
     this.link,
   );

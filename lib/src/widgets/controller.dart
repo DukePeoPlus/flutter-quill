@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_quill/src/models/documents/nodes/node.dart';
+import 'package:flutter_quill/src/widgets/toolbar/link_style_button.dart';
 import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
 
 import '../models/documents/attribute.dart';
@@ -774,5 +776,65 @@ class QuillController extends ChangeNotifier {
     );
 
     return converter.convert();
+  }
+
+  String? getLinkAttributeValue() {
+    return getSelectionStyle()
+      .attributes[Attribute.link.key]
+      ?.value;
+  }
+
+  TextRange getLinkRange(Node node) {
+    var start = node.documentOffset;
+    var length = node.length;
+    var prev = node.previous;
+    final linkAttr = node.style.attributes[Attribute.link.key]!;
+
+    while (prev != null) {
+      if (prev.style.attributes[Attribute.link.key] == linkAttr) {
+        start = prev.documentOffset;
+        length += prev.length;
+        prev = prev.previous;
+      } else {
+        break;
+      }
+    }
+
+    var next = node.next;
+    while (next != null) {
+      if (next.style.attributes[Attribute.link.key] == linkAttr) {
+        length += next.length;
+        next = next.next;
+      } else {
+        break;
+      }
+    }
+    return TextRange(start: start, end: start + length);
+  }
+
+  void linkSubmitted(TextLink value) {
+    var index = selection.start;
+    var length = selection.end - index;
+    if (getLinkAttributeValue() != null) {
+      final leaf = document.querySegmentLeafNode(index).leaf;
+      if (leaf != null) {
+        final range = getLinkRange(leaf);
+        index = range.start;
+        length = range.end - range.start;
+      }
+    }
+
+    replaceText(
+      index,
+      length,
+      value.text,
+      null
+    );
+
+    formatText(
+      index,
+      value.text.length,
+      LinkAttribute(value.link)
+    );
   }
 }
