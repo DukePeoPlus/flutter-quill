@@ -135,27 +135,11 @@ class _LinkStyleButtonState extends State<LinkStyleButton> {
   }
 
   String? _getLinkAttributeValue() {
-    return widget.controller
-        .getSelectionStyle()
-        .attributes[Attribute.link.key]
-        ?.value;
+    return widget.controller.getLinkAttributeValue();
   }
 
   void _linkSubmitted(TextLink value) {
-    var index = widget.controller.selection.start;
-    var length = widget.controller.selection.end - index;
-    if (_getLinkAttributeValue() != null) {
-      // text should be the link's corresponding text, not selection
-      final leaf = widget.controller.document.querySegmentLeafNode(index).leaf;
-      if (leaf != null) {
-        final range = getLinkRange(leaf);
-        index = range.start;
-        length = range.end - range.start;
-      }
-    }
-    widget.controller.replaceText(index, length, value.text, null);
-    widget.controller
-        .formatText(index, value.text.length, LinkAttribute(value.link));
+    return widget.controller.linkSubmitted(value);
   }
 }
 
