@@ -198,10 +198,11 @@ class QuillEditor extends StatefulWidget {
     required QuillController controller,
     required bool readOnly,
     bool autoFocus = true,
-    bool showCursor = true, 
+    bool showCursor = true,
     FocusNode? focusNode,
     Brightness? keyboardAppearance,
     Iterable<EmbedBuilder>? embedBuilders,
+    ValueChanged<String>? onLaunchUrl,
 
     /// The locale to use for the editor toolbar, defaults to system locale
     /// More at https://github.com/singerdmx/flutter-quill#translation
@@ -214,6 +215,7 @@ class QuillEditor extends StatefulWidget {
       focusNode: focusNode ?? FocusNode(),
       autoFocus: autoFocus,
       showCursor: showCursor,
+      onLaunchUrl: onLaunchUrl,
       readOnly: readOnly,
       expands: false,
       padding: EdgeInsets.zero,
