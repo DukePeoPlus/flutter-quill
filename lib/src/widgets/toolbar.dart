@@ -658,6 +658,8 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
     ///shown when embedding an image, for example
     QuillDialogTheme? dialogTheme,
 
+    Function(BuildContext)? customDialog,
+
     /// Callback to be called after any button on the toolbar is pressed.
     /// Is called after whatever logic the button performs has run.
     VoidCallback? afterButtonPressed,
@@ -1101,6 +1103,7 @@ class QuillToolbar extends StatelessWidget implements PreferredSizeWidget {
               color: sectionDividerColor, space: sectionDividerSpace),
         if (showLink)
           LinkStyleButton(
+            customDialog: customDialog,
             tooltip: buttonTooltips[ToolbarButtons.link],
             controller: controller,
             iconSize: toolbarIconSize,
