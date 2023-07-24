@@ -54,6 +54,8 @@ class Attribute<T> {
     'h4': Attribute.h4,
     'h5': Attribute.h5,
     'h6': Attribute.h6,
+    'checked': Attribute.checked,
+    'unchecked': Attribute.unchecked,
   });
 
   static const TagAttribute tag = TagAttribute();
