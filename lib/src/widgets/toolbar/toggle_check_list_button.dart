@@ -111,8 +111,8 @@ class _ToggleCheckListButtonState extends State<ToggleCheckListButton> {
   }
 
   void _toggleAttribute() {
-    // widget.controller.formatSelection(_isToggled!
-    //     ? Attribute.clone(Attribute.unchecked, null)
-    //     : Attribute.unchecked);
+    widget.controller.formatSelection(_isToggled!
+        ? Attribute.clone(Attribute.unchecked, null)
+        : Attribute.unchecked);
   }
 }

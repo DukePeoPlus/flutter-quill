@@ -2624,9 +2624,9 @@ class _ApplyCheckListAction extends Action<ApplyCheckListIntent> {
 
   @override
   void invoke(ApplyCheckListIntent intent, [BuildContext? context]) {
-    // state.controller.formatSelection(_getIsToggled()
-    //     ? Attribute.clone(Attribute.unchecked, null)
-    //     : Attribute.unchecked);
+    state.controller.formatSelection(_getIsToggled()
+        ? Attribute.clone(Attribute.unchecked, null)
+        : Attribute.unchecked);
   }
 
   @override
