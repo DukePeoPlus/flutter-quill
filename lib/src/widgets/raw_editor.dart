@@ -763,10 +763,7 @@ class RawEditorState extends EditorState
       final parentBlock = child.node!.parent!;
       if (parentBlock.style.containsKey(Attribute.ol.key) ||
           parentBlock.style.containsKey(Attribute.ul.key) ||
-          parentBlock.style.containsKey(Attribute.checked.key) ||
-          parentBlock.style.containsKey(Attribute.unchecked.key)
-          // 07/24
-        ) {
+          parentBlock.style.containsKey(Attribute.checked.key)) {
         controller.indentSelection(!event.isShiftPressed);
       }
       return KeyEventResult.handled;
@@ -790,10 +787,7 @@ class RawEditorState extends EditorState
     final parentBlock = parent;
     if (parentBlock.style.containsKey(Attribute.ol.key) ||
         parentBlock.style.containsKey(Attribute.ul.key) ||
-        parentBlock.style.containsKey(Attribute.checked.key) ||
-        parentBlock.style.containsKey(Attribute.unchecked.key)
-        // 07/24
-        ) {
+        parentBlock.style.containsKey(Attribute.checked.key)) {
       if (node.isNotEmpty &&
           (node.first as leaf.Text).value.isNotEmpty &&
           controller.selection.base.offset > node.documentOffset) {
@@ -2630,9 +2624,9 @@ class _ApplyCheckListAction extends Action<ApplyCheckListIntent> {
 
   @override
   void invoke(ApplyCheckListIntent intent, [BuildContext? context]) {
-    state.controller.formatSelection(_getIsToggled()
-        ? Attribute.clone(Attribute.unchecked, null)
-        : Attribute.unchecked);
+    // state.controller.formatSelection(_getIsToggled()
+    //     ? Attribute.clone(Attribute.unchecked, null)
+    //     : Attribute.unchecked);
   }
 
   @override
