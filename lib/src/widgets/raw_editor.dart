@@ -763,7 +763,10 @@ class RawEditorState extends EditorState
       final parentBlock = child.node!.parent!;
       if (parentBlock.style.containsKey(Attribute.ol.key) ||
           parentBlock.style.containsKey(Attribute.ul.key) ||
-          parentBlock.style.containsKey(Attribute.checked.key)) {
+          parentBlock.style.containsKey(Attribute.checked.key) ||
+          parentBlock.style.containsKey(Attribute.unchecked.key)
+          // 07/24
+        ) {
         controller.indentSelection(!event.isShiftPressed);
       }
       return KeyEventResult.handled;
@@ -787,7 +790,10 @@ class RawEditorState extends EditorState
     final parentBlock = parent;
     if (parentBlock.style.containsKey(Attribute.ol.key) ||
         parentBlock.style.containsKey(Attribute.ul.key) ||
-        parentBlock.style.containsKey(Attribute.checked.key)) {
+        parentBlock.style.containsKey(Attribute.checked.key) ||
+        parentBlock.style.containsKey(Attribute.unchecked.key)
+        // 07/24
+        ) {
       if (node.isNotEmpty &&
           (node.first as leaf.Text).value.isNotEmpty &&
           controller.selection.base.offset > node.documentOffset) {
