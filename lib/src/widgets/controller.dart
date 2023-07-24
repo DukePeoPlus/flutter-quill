@@ -454,7 +454,7 @@ class QuillController extends ChangeNotifier {
 
     final checked = Attribute.getValueFromKey('checked');
     final unchecked = Attribute.getValueFromKey('unchecked');
-    final isCheckList = attr.value == checked || attr.value == unchecked; 
+    final isCheckList = attr == checked || attr == unchecked; 
 
     final functionCondition = indent?.value == null 
       && current.attributes?['list'] == null 
@@ -471,7 +471,7 @@ class QuillController extends ChangeNotifier {
               final trimNewLineCondition = currentIndentValue == null 
                 && beforeIndentValue == null
                 && tmpCurrentAttr != attr.value
-                && tmpBeforeAttr == (attr.value || isCheckList)
+                && (tmpBeforeAttr == attr.value || isCheckList)
                 && indentValue == 0
                 || currentIndentValue != null;
 
@@ -492,13 +492,13 @@ class QuillController extends ChangeNotifier {
       } else if (before.data == '\n\n') {
         if (indentValue == 0) {
           final increaseCondition = tmpCurrentAttr != attr.value
-            && tmpBeforeAttr == (attr.value || isCheckList)
+            && (tmpBeforeAttr == attr.value || isCheckList)
             && !current.hasAttribute(Attribute.indent.key);
 
           final decreaseCondition = currentIndentValue == null
             && beforeIndentValue == 2
-            && tmpCurrentAttr == (attr.value || isCheckList)
-            && tmpBeforeAttr == (attr.value || isCheckList);
+            && (tmpCurrentAttr == attr.value || isCheckList)
+            && (tmpBeforeAttr == attr.value || isCheckList);
 
           if (decreaseCondition) {
             formatSelection(attr);
@@ -510,13 +510,13 @@ class QuillController extends ChangeNotifier {
         } else if (indentValue == 1) {
           final decreaseCondition = currentIndentValue == null
             && beforeIndentValue == 2
-            && tmpCurrentAttr == (attr.value || isCheckList)
-            && tmpBeforeAttr == (attr.value || isCheckList);
+            && (tmpCurrentAttr == attr.value || isCheckList)
+            && (tmpBeforeAttr == attr.value || isCheckList);
 
           final increaseCondition = currentIndentValue == 1
             && beforeIndentValue == 1
             && tmpCurrentAttr != attr.value
-            && tmpBeforeAttr == (attr.value || isCheckList);
+            && (tmpBeforeAttr == attr.value || isCheckList);
           if (decreaseCondition) {
             formatSelection(attr);
             formatSelection(Attribute.getIndentLevel(indentValue - 1));
@@ -533,7 +533,7 @@ class QuillController extends ChangeNotifier {
           final decreaseCondition = currentIndentValue == 1
             && beforeIndentValue == 1
             && tmpCurrentAttr != attr.value
-            && tmpBeforeAttr == (attr.value || isCheckList)
+            && (tmpBeforeAttr == attr.value || isCheckList)
             && prevBefore?.data == '\n';
           final prevBeforeIndentValue = prevBefore?.attributes?['indent'];
 
@@ -561,8 +561,8 @@ class QuillController extends ChangeNotifier {
           final trimNewLineCondition = currentIndentValue == null 
             && beforeIndentValue == 0
             && currentIndentValue == null
-            && tmpCurrentAttr (attr.value || isCheckList)
-            && tmpBeforeAttr (attr.value || isCheckList);
+            && (tmpCurrentAttr == attr.value || isCheckList)
+            && (tmpBeforeAttr == attr.value || isCheckList);
 
           if (trimNewLineCondition) {
             final isBeforeNewLine = before.isInsert && before.data == '\n';
