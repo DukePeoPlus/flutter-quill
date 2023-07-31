@@ -205,6 +205,7 @@ class QuillEditor extends StatefulWidget {
     ValueChanged<String>? onLaunchUrl,
     double? minHeight,
     double? maxHeight,
+    EdgeInsets padding = EdgeInsets.zero,
 
     /// The locale to use for the editor toolbar, defaults to system locale
     /// More at https://github.com/singerdmx/flutter-quill#translation
@@ -220,7 +221,7 @@ class QuillEditor extends StatefulWidget {
       onLaunchUrl: onLaunchUrl,
       readOnly: readOnly,
       expands: false,
-      padding: EdgeInsets.zero,
+      padding: padding,
       keyboardAppearance: keyboardAppearance ?? Brightness.light,
       locale: locale,
       embedBuilders: embedBuilders,
