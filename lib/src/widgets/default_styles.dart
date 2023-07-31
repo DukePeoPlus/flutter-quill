@@ -372,7 +372,8 @@ class DefaultStyles {
             const VerticalSpacing(0, 0),
             null),
         lists: DefaultListBlockStyle(
-            baseStyle, baseSpacing, const VerticalSpacing(3, 3), null, null),
+            baseStyle, const VerticalSpacing(3, 3),
+            const VerticalSpacing(0, 6), null ,null),
             // baseStyle, baseSpacing, const VerticalSpacing(0, 6), null, null),
         quote: DefaultTextBlockStyle(
             TextStyle(color: baseStyle.color!.withOpacity(0.6)),
@@ -397,7 +398,9 @@ class DefaultStyles {
               borderRadius: BorderRadius.circular(2),
             )),
         indent: DefaultTextBlockStyle(
-            baseStyle, baseSpacing, const VerticalSpacing(0, 6), null),
+            baseStyle, const VerticalSpacing(3, 3),
+            const VerticalSpacing(0, 6), null),
+            // baseStyle, baseSpacing, const VerticalSpacing(0, 6), null),
         align: DefaultTextBlockStyle(baseStyle, const VerticalSpacing(0, 0),
             const VerticalSpacing(0, 0), null),
         leading: DefaultTextBlockStyle(baseStyle, const VerticalSpacing(0, 0),
