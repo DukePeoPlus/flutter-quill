@@ -203,6 +203,8 @@ class QuillEditor extends StatefulWidget {
     Brightness? keyboardAppearance,
     Iterable<EmbedBuilder>? embedBuilders,
     ValueChanged<String>? onLaunchUrl,
+    double? minHeight,
+    double? maxHeight,
 
     /// The locale to use for the editor toolbar, defaults to system locale
     /// More at https://github.com/singerdmx/flutter-quill#translation
@@ -222,6 +224,8 @@ class QuillEditor extends StatefulWidget {
       keyboardAppearance: keyboardAppearance ?? Brightness.light,
       locale: locale,
       embedBuilders: embedBuilders,
+      minHeight: minHeight,
+      maxHeight: maxHeight,
     );
   }
 
