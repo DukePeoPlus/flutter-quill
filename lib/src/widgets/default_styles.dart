@@ -372,7 +372,8 @@ class DefaultStyles {
             const VerticalSpacing(0, 0),
             null),
         lists: DefaultListBlockStyle(
-            baseStyle, baseSpacing, const VerticalSpacing(0, 6), null, null),
+            baseStyle, baseSpacing, const VerticalSpacing(3, 3), null, null),
+            // baseStyle, baseSpacing, const VerticalSpacing(0, 6), null, null),
         quote: DefaultTextBlockStyle(
             TextStyle(color: baseStyle.color!.withOpacity(0.6)),
             baseSpacing,
