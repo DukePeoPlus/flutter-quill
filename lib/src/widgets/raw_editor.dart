@@ -84,6 +84,7 @@ class RawEditor extends StatefulWidget {
     this.onImagePaste,
     this.customLinkPrefixes = const <String>[],
     this.dialogTheme,
+    this.alignment,
     // this.contentInsertionConfiguration,
   })  : assert(maxHeight == null || maxHeight > 0, 'maxHeight cannot be null'),
         assert(minHeight == null || minHeight >= 0, 'minHeight cannot be null'),
@@ -276,6 +277,8 @@ class RawEditor extends StatefulWidget {
   ///
   /// See [https://api.flutter.dev/flutter/widgets/EditableText/contentInsertionConfiguration.html]
   // final ContentInsertionConfiguration? contentInsertionConfiguration;
+
+  final Alignment? alignment;
 
   @override
   State<StatefulWidget> createState() => RawEditorState();
@@ -676,6 +679,7 @@ class RawEditorState extends EditorState
               onKey: _onKey,
               child: QuillKeyboardListener(
                 child: Container(
+                  alignment: widget.alignment,
                   constraints: constraints,
                   child: child,
                 ),

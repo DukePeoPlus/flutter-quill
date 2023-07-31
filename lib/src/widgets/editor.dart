@@ -190,6 +190,7 @@ class QuillEditor extends StatefulWidget {
     this.enableUnfocusOnTapOutside = true,
     this.customLinkPrefixes = const <String>[],
     this.dialogTheme,
+    this.alignment,
     // this.contentInsertionConfiguration,
     Key? key,
   }) : super(key: key);
@@ -206,6 +207,7 @@ class QuillEditor extends StatefulWidget {
     double? minHeight,
     double? maxHeight,
     EdgeInsets padding = EdgeInsets.zero,
+    Alignment? alignment,
 
     /// The locale to use for the editor toolbar, defaults to system locale
     /// More at https://github.com/singerdmx/flutter-quill#translation
@@ -215,6 +217,7 @@ class QuillEditor extends StatefulWidget {
       controller: controller,
       scrollController: ScrollController(),
       scrollable: true,
+      alignment: alignment,
       focusNode: focusNode ?? FocusNode(),
       autoFocus: autoFocus,
       showCursor: showCursor,
@@ -229,6 +232,8 @@ class QuillEditor extends StatefulWidget {
       maxHeight: maxHeight,
     );
   }
+
+  final Alignment? alignment;
 
   /// Controller object which establishes a link between a rich text document
   /// and this editor.
@@ -507,6 +512,7 @@ class QuillEditorState extends State<QuillEditor>
 
     final child = RawEditor(
       key: _editorKey,
+      alignment: widget.alignment,
       controller: widget.controller,
       focusNode: widget.focusNode,
       scrollController: widget.scrollController,
