@@ -48,7 +48,6 @@ class QuillController extends ChangeNotifier {
 
     // Prevent the selection from
     _selection = const TextSelection(baseOffset: 0, extentOffset: 0);
-
     notifyListeners();
   }
 
@@ -433,7 +432,7 @@ class QuillController extends ChangeNotifier {
   /// Duke Jeon (duke@peoplus.studio)
   void checkList(
     DocChange event,
-    Attribute attr,{
+    Attribute attr, {
       Function()? onDelete,
       Function()? onEditingComplete,
     }) {
@@ -581,22 +580,48 @@ class QuillController extends ChangeNotifier {
   /// Duke Jeon (duke@peoplus.studio)
   bool isSubmitted(
     DocChange event, {
-      bool hasTrimNewLine = false
+      bool hasTrimNewLine = false,
+      bool isInsertNewLine = true,
     }
   ) {
     final current = event.change.toList().last;
     final eventLength = event.change.toList().length;
     var before = event.change.toList().last;
-    if (eventLength > 1) {
-      before = event.change.toList()[eventLength - 2];
+    var trimIndex;
+    var hasOnlyRetain = true;
+
+    for (final operation in event.change.toList()) {
+      if (!operation.isRetain) {
+        hasOnlyRetain = false;
+        break;
+      }
     }
 
-    final isCurrentNewLine = current.isInsert && current.data == '\n';
-    final isBeforeNewLine = before.isInsert && before.data == '\n';
+    if (eventLength > 1) {
+      if (isInsertNewLine) {
+        trimIndex = event.change.toList().first.length;
+        before = event.before.toList().last;
+      } else {
+        before = event.change.toList()[eventLength - 2];
+      }
+    }
+
+    final isCurrentNewLine = isInsertNewLine
+      ? current.isRetain && before.isInsert && before.data == '\n'
+      : current.isInsert && current.data == '\n';
+    final isBeforeNewLine = isInsertNewLine
+      ? current.isInsert && current.data == '\n' && before.isInsert && before.data == '\n'
+      : before.isInsert && before.data == '\n';
     
     if (isCurrentNewLine || isBeforeNewLine) {
       if (hasTrimNewLine) {
-        return trimNewLine(isBeforeNewLine: isBeforeNewLine);
+        return trimNewLine(
+          trimIndex: isBeforeNewLine
+            ? trimIndex
+            : null,
+          isBeforeNewLine: isBeforeNewLine,
+          isAuto: hasOnlyRetain && !isBeforeNewLine,
+        );
       }
       return true;
     }
@@ -609,22 +634,67 @@ class QuillController extends ChangeNotifier {
   /// 
   /// Duke Jeon (duke@peoplus.studio)
   bool trimNewLine({
+    int? trimIndex,
     bool isBeforeNewLine = false,
     bool isCheckList = true,
+    bool isAuto = false,
   }) {
-    final length = document.toPlainText().length;
-    var index = document.toPlainText().lastIndexOf('\n') - 1;
+    var index = trimIndex ?? document.toPlainText().lastIndexOf('\n');
+
+    if (isAuto) {
+      index = trimIndex ?? document.toPlainText().lastIndexOf('\n') - 1;
+    }
+    var length = document.toPlainText().length;
     var removeLength = 1;
 
     if (isBeforeNewLine) {
       index = document.toPlainText().lastIndexOf('') - 1;
-      if (length >= 2) {
-        if (isCheckList) {
-          removeLength = 2;
-        } else {
+    }
+
+    if (length >= 2) {
+      if (isCheckList) {
+        removeLength = 2;
+      } else {
+        removeLength = 1;
+      }
+    }
+
+    if (trimIndex != null) {
+      replaceText(
+        trimIndex,
+        length - trimIndex,
+        '',
+        TextSelection.collapsed(
+          offset: trimIndex
+        )
+      );
+
+      final newLineCount = document.toDelta().last.data.toString().split('\n').length;
+
+      if (newLineCount > 1) {
+        index = document.toPlainText().lastIndexOf('\n') - (newLineCount - 1);
+        length = document.length;
+        removeLength = length - index;
+        final deltaLength = document.toDelta().toJson().length;
+
+        if (deltaLength > 2) {
+          removeLength++;
+        } else if (deltaLength == 2) {
+          index++;
           removeLength = 1;
         }
+        document.replace(index, removeLength, '');
+        updateSelection(TextSelection.collapsed(offset: index), ChangeSource.LOCAL);
       }
+      return true;
+    }
+
+    final ignore = document.toDelta().first.data.toString().startsWith('\n');
+
+    if (ignore) {
+      document.delete(0, document.length);
+      updateSelection(const TextSelection.collapsed(offset: 0), ChangeSource.LOCAL);
+      return true;
     }
 
     if (index > 0 && index == length - 1) {
@@ -636,6 +706,17 @@ class QuillController extends ChangeNotifier {
           offset: index
         )
       );
+
+      final tmpNewLineCount = document.toDelta().last.data.toString().split('\n').length;
+
+      if (tmpNewLineCount > 1) {
+        index = document.toPlainText().lastIndexOf('\n') - (tmpNewLineCount - 2);
+        length = document.toPlainText().length;
+        removeLength = length - index;
+
+        document.replace(index, removeLength, '');
+        updateSelection(TextSelection.collapsed(offset: index), ChangeSource.LOCAL);
+      }
       return true;
     }
     return false;
