@@ -861,11 +861,7 @@ class QuillController extends ChangeNotifier {
   }
 
   String toHtml() {
-    final converter = QuillDeltaToHtmlConverter(
-      List.castFrom(_document.toDelta().toJson()),
-    );
-
-    return converter.convert();
+    return _document.toHtml();
   }
 
   String? getLinkAttributeValue() {

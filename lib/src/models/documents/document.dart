@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
+
 import '../quill_delta.dart';
 import '../rules/rule.dart';
 import '../structs/doc_change.dart';
@@ -393,6 +395,14 @@ class Document {
     return delta.length == 1 &&
         delta.first.data == '\n' &&
         delta.first.key == 'insert';
+  }
+
+  String toHtml() {
+    final converter = QuillDeltaToHtmlConverter(
+      List.castFrom(toDelta().toJson()),
+    );
+
+    return converter.convert();
   }
 }
 
