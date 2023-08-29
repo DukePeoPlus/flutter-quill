@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_quill/src/models/documents/nodes/node.dart';
 import 'package:flutter_quill/src/widgets/toolbar/link_style_button.dart';
 import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
+import 'package:flutter_quill/src/widgets/text_selection.dart' as quillSelection;
 
 import '../models/documents/attribute.dart';
 import '../models/documents/document.dart';
@@ -669,22 +670,19 @@ class QuillController extends ChangeNotifier {
         )
       );
 
-      final newLineCount = document.toDelta().last.data.toString().split('\n').length;
+      final newLineCount = document.toDelta()
+        .last.data.toString()
+        .split('\n').length;
 
       if (newLineCount > 1) {
-        index = document.toPlainText().lastIndexOf('\n') - (newLineCount - 1);
-        length = document.length;
+        index = document.toPlainText().indexOf('\n');
+        length = document.toPlainText().length;
         removeLength = length - index;
-        final deltaLength = document.toDelta().toJson().length;
-
-        if (deltaLength > 2) {
-          removeLength++;
-        } else if (deltaLength == 2) {
-          index++;
-          removeLength = 1;
-        }
         document.replace(index, removeLength, '');
-        updateSelection(TextSelection.collapsed(offset: index), ChangeSource.LOCAL);
+        updateSelection(
+          TextSelection.collapsed(offset: index),
+          ChangeSource.LOCAL
+        );
       }
       return true;
     }
@@ -693,7 +691,10 @@ class QuillController extends ChangeNotifier {
 
     if (ignore) {
       document.delete(0, document.length);
-      updateSelection(const TextSelection.collapsed(offset: 0), ChangeSource.LOCAL);
+      updateSelection(
+        const TextSelection.collapsed(offset: 0),
+        ChangeSource.LOCAL
+      );
       return true;
     }
 
@@ -707,15 +708,19 @@ class QuillController extends ChangeNotifier {
         )
       );
 
-      final tmpNewLineCount = document.toDelta().last.data.toString().split('\n').length;
+      final tmpNewLineCount = document.toDelta()
+        .last.data.toString()
+        .split('\n').length;
 
       if (tmpNewLineCount > 1) {
-        index = document.toPlainText().lastIndexOf('\n') - (tmpNewLineCount - 2);
+        index = document.toPlainText().indexOf('\n');
         length = document.toPlainText().length;
         removeLength = length - index;
-
         document.replace(index, removeLength, '');
-        updateSelection(TextSelection.collapsed(offset: index), ChangeSource.LOCAL);
+        updateSelection(
+          TextSelection.collapsed(offset: index),
+          ChangeSource.LOCAL
+        );
       }
       return true;
     }
