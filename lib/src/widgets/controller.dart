@@ -477,7 +477,10 @@ class QuillController extends ChangeNotifier {
 
               if (trimNewLineCondition) {
                 final isBeforeNewLine = before.isInsert && before.data == '\n';
-                trimNewLine(isBeforeNewLine: isBeforeNewLine);
+                trimNewLine(
+                  isBeforeNewLine: isBeforeNewLine,
+                  isList: true
+                );
                 onEditingComplete();
               } else {
                 formatSelection(attr);
@@ -545,7 +548,10 @@ class QuillController extends ChangeNotifier {
               if (length > 1) {
                 if (onEditingComplete != null) {
                   final isBeforeNewLine = before.isInsert && before.data == '\n';
-                  trimNewLine(isBeforeNewLine: isBeforeNewLine);
+                  trimNewLine(
+                    isBeforeNewLine: isBeforeNewLine,
+                    isList: true
+                  );
                   onEditingComplete();
                 }
               } else {
@@ -566,7 +572,10 @@ class QuillController extends ChangeNotifier {
 
           if (trimNewLineCondition) {
             final isBeforeNewLine = before.isInsert && before.data == '\n';
-            trimNewLine(isBeforeNewLine: isBeforeNewLine);
+            trimNewLine(
+              isBeforeNewLine: isBeforeNewLine,
+              isList: true
+            );
             onEditingComplete!();
           }
         }
@@ -637,8 +646,9 @@ class QuillController extends ChangeNotifier {
   bool trimNewLine({
     int? trimIndex,
     bool isBeforeNewLine = false,
-    bool isCheckList = true,
+    bool useRemoveLength = true,
     bool isAuto = false,
+    bool isList = false,
   }) {
     var index = trimIndex ?? document.toPlainText().lastIndexOf('\n');
 
@@ -653,7 +663,7 @@ class QuillController extends ChangeNotifier {
     }
 
     if (length >= 2) {
-      if (isCheckList) {
+      if (useRemoveLength) {
         removeLength = 2;
       } else {
         removeLength = 1;
@@ -674,7 +684,7 @@ class QuillController extends ChangeNotifier {
         .last.data.toString()
         .split('\n').length;
 
-      if (newLineCount > 1) {
+      if (newLineCount > 1 && !isList) {
         index = document.toPlainText().indexOf('\n');
         length = document.toPlainText().length;
         removeLength = length - index;
@@ -712,7 +722,7 @@ class QuillController extends ChangeNotifier {
         .last.data.toString()
         .split('\n').length;
 
-      if (tmpNewLineCount > 1) {
+      if (tmpNewLineCount > 1 && !isList) {
         index = document.toPlainText().indexOf('\n');
         length = document.toPlainText().length;
         removeLength = length - index;
