@@ -20,7 +20,6 @@ import '../models/documents/nodes/embeddable.dart';
 import '../models/documents/nodes/leaf.dart' as leaf;
 import '../models/documents/nodes/line.dart';
 import '../models/documents/nodes/node.dart';
-import '../models/documents/style.dart';
 import '../models/structs/offset_value.dart';
 import '../models/structs/vertical_spacing.dart';
 import '../models/themes/quill_dialog_theme.dart';
@@ -321,8 +320,8 @@ class RawEditorState extends EditorState
 
   // for pasting style
   @override
-  List<OffsetValue<Style>> get pasteStyle => _pasteStyle;
-  List<OffsetValue<Style>> _pasteStyle = <OffsetValue<Style>>[];
+  List<OffsetValue> get pasteStyleAndEmbed => _pasteStyleAndEmbed;
+  List<OffsetValue> _pasteStyleAndEmbed = <OffsetValue>[];
 
   @override
   String get pastePlainText => _pastePlainText;
@@ -354,6 +353,7 @@ class RawEditorState extends EditorState
   List<ContextMenuButtonItem> get contextMenuButtonItems {
     return EditableText.getEditableButtonItems(
       clipboardStatus: _clipboardStatus.value,
+      // onLiveTextInput: null,
       onCopy: copyEnabled
           ? () => copySelection(SelectionChangedCause.toolbar)
           : null,
@@ -464,23 +464,26 @@ class RawEditorState extends EditorState
     Widget child = CompositedTransformTarget(
       link: _toolbarLayerLink,
       child: Semantics(
-        child: _Editor(
-          key: _editorKey,
-          document: _doc,
-          selection: controller.selection,
-          hasFocus: _hasFocus,
-          scrollable: widget.scrollable,
-          cursorController: _cursorCont,
-          textDirection: _textDirection,
-          startHandleLayerLink: _startHandleLayerLink,
-          endHandleLayerLink: _endHandleLayerLink,
-          onSelectionChanged: _handleSelectionChanged,
-          onSelectionCompleted: _handleSelectionCompleted,
-          scrollBottomInset: widget.scrollBottomInset,
-          padding: widget.padding,
-          maxContentWidth: widget.maxContentWidth,
-          floatingCursorDisabled: widget.floatingCursorDisabled,
-          children: _buildChildren(_doc, context),
+        child: MouseRegion(
+          cursor: SystemMouseCursors.text,
+          child: _Editor(
+            key: _editorKey,
+            document: _doc,
+            selection: controller.selection,
+            hasFocus: _hasFocus,
+            scrollable: widget.scrollable,
+            cursorController: _cursorCont,
+            textDirection: _textDirection,
+            startHandleLayerLink: _startHandleLayerLink,
+            endHandleLayerLink: _endHandleLayerLink,
+            onSelectionChanged: _handleSelectionChanged,
+            onSelectionCompleted: _handleSelectionCompleted,
+            scrollBottomInset: widget.scrollBottomInset,
+            padding: widget.padding,
+            maxContentWidth: widget.maxContentWidth,
+            floatingCursorDisabled: widget.floatingCursorDisabled,
+            children: _buildChildren(_doc, context),
+          ),
         ),
       ),
     );
@@ -502,24 +505,27 @@ class RawEditorState extends EditorState
           physics: widget.scrollPhysics,
           viewportBuilder: (_, offset) => CompositedTransformTarget(
             link: _toolbarLayerLink,
-            child: _Editor(
-              key: _editorKey,
-              offset: offset,
-              document: _doc,
-              selection: controller.selection,
-              hasFocus: _hasFocus,
-              scrollable: widget.scrollable,
-              textDirection: _textDirection,
-              startHandleLayerLink: _startHandleLayerLink,
-              endHandleLayerLink: _endHandleLayerLink,
-              onSelectionChanged: _handleSelectionChanged,
-              onSelectionCompleted: _handleSelectionCompleted,
-              scrollBottomInset: widget.scrollBottomInset,
-              padding: widget.padding,
-              maxContentWidth: widget.maxContentWidth,
-              cursorController: _cursorCont,
-              floatingCursorDisabled: widget.floatingCursorDisabled,
-              children: _buildChildren(_doc, context),
+            child: MouseRegion(
+              cursor: SystemMouseCursors.text,
+              child: _Editor(
+                key: _editorKey,
+                offset: offset,
+                document: _doc,
+                selection: controller.selection,
+                hasFocus: _hasFocus,
+                scrollable: widget.scrollable,
+                textDirection: _textDirection,
+                startHandleLayerLink: _startHandleLayerLink,
+                endHandleLayerLink: _endHandleLayerLink,
+                onSelectionChanged: _handleSelectionChanged,
+                onSelectionCompleted: _handleSelectionCompleted,
+                scrollBottomInset: widget.scrollBottomInset,
+                padding: widget.padding,
+                maxContentWidth: widget.maxContentWidth,
+                cursorController: _cursorCont,
+                floatingCursorDisabled: widget.floatingCursorDisabled,
+                children: _buildChildren(_doc, context),
+              ),
             ),
           ),
         ),
@@ -972,8 +978,6 @@ class RawEditorState extends EditorState
         widget.selectionColor,
         widget.enableInteractiveSelection,
         _hasFocus,
-        // 06/19
-        // View.of(context).devicePixelRatio,
         MediaQuery.of(context).devicePixelRatio,
         _cursorCont);
     return editableTextLine;
@@ -1441,7 +1445,7 @@ class RawEditorState extends EditorState
   void copySelection(SelectionChangedCause cause) {
     controller.copiedImageUrl = null;
     _pastePlainText = controller.getPlainText();
-    _pasteStyle = controller.getAllIndividualSelectionStyles();
+    _pasteStyleAndEmbed = controller.getAllIndividualSelectionStylesAndEmbed();
 
     final selection = textEditingValue.selection;
     final text = textEditingValue.text;
@@ -1470,7 +1474,7 @@ class RawEditorState extends EditorState
   void cutSelection(SelectionChangedCause cause) {
     controller.copiedImageUrl = null;
     _pastePlainText = controller.getPlainText();
-    _pasteStyle = controller.getAllIndividualSelectionStyles();
+    _pasteStyleAndEmbed = controller.getAllIndividualSelectionStylesAndEmbed();
 
     if (widget.readOnly) {
       return;
@@ -1753,6 +1757,10 @@ class RawEditorState extends EditorState
       }
     }
   }
+
+  @override
+  // TODO: implement liveTextInputEnabled
+  bool get liveTextInputEnabled => false;
 }
 
 class _Editor extends MultiChildRenderObjectWidget {

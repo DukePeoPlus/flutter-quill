@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart' as quill;
 import '../../models/rules/insert.dart';
 import '../../models/themes/quill_dialog_theme.dart';
 import '../../models/themes/quill_icon_theme.dart';
@@ -17,6 +18,8 @@ class LinkStyleButton extends StatefulWidget {
     this.afterButtonPressed,
     this.tooltip,
     this.customDialog,
+    this.linkRegExp,
+    this.linkDialogAction,
     Key? key,
   }) : super(key: key);
 
@@ -29,6 +32,8 @@ class LinkStyleButton extends StatefulWidget {
   final VoidCallback? afterButtonPressed;
   final String? tooltip;
   final Function(BuildContext)? customDialog;
+  final RegExp? linkRegExp;
+  final quill.LinkDialogAction? linkDialogAction;
 
   @override
   _LinkStyleButtonState createState() => _LinkStyleButtonState();
@@ -122,6 +127,8 @@ class _LinkStyleButtonState extends State<LinkStyleButton> {
           link: link,
           text: text,
           onPressed: widget.beforeButtonPressed,
+          linkRegExp: widget.linkRegExp,
+          action: widget.linkDialogAction,
         );
       },
     ).then(
@@ -146,6 +153,8 @@ class _LinkDialog extends StatefulWidget {
     this.link,
     this.text,
     this.onPressed,
+    this.linkRegExp,
+    this.action,
     Key? key,
   })
   : super(key: key);
@@ -154,6 +163,8 @@ class _LinkDialog extends StatefulWidget {
   final String? link;
   final String? text;
   final Function()? onPressed;
+  final RegExp? linkRegExp;
+  final quill.LinkDialogAction? action;
 
   @override
   _LinkDialogState createState() => _LinkDialogState();
@@ -164,12 +175,14 @@ class _LinkDialogState extends State<_LinkDialog> {
   late String _text;
   late TextEditingController _linkController;
   late TextEditingController _textController;
+  late RegExp linkRegExp;
 
   @override
   void initState() {
     super.initState();
     _link = widget.link ?? '';
     _text = widget.text ?? '';
+    linkRegExp = widget.linkRegExp ?? AutoFormatMultipleLinksRule.linkRegExp;
     _linkController = TextEditingController(text: _link);
     _textController = TextEditingController(text: _text);
   }
@@ -224,7 +237,7 @@ class _LinkDialogState extends State<_LinkDialog> {
       return false;
     }
 
-    if (!AutoFormatMultipleLinksRule.linkRegExp.hasMatch(_link)) {
+    if (!linkRegExp.hasMatch(_link)) {
       return false;
     }
 
