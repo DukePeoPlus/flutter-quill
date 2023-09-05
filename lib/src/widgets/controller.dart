@@ -490,6 +490,7 @@ class QuillController extends ChangeNotifier {
                 onEditingComplete();
               } else {
                 formatSelection(attr);
+                moveCursorToEnd();
               }
             }
           }
@@ -529,13 +530,16 @@ class QuillController extends ChangeNotifier {
           if (decreaseCondition) {
             formatSelection(attr);
             formatSelection(Attribute.getIndentLevel(indentValue - 1));
+            moveCursorToEnd();
           } else if (increaseCondition) {
             formatSelection(attr);
             formatSelection(Attribute.getIndentLevel(indentValue + 1));
+            moveCursorToEnd();
           }
         } else if (tmpCurrentAttr != attr.value && beforeIndentValue != 1) {
           formatSelection(attr);
           formatSelection(Attribute.getIndentLevel(indentValue - 1));
+          moveCursorToEnd();
         }
       } else if (before.data == '\n') {
         if (indentValue == 1) {
@@ -550,6 +554,7 @@ class QuillController extends ChangeNotifier {
             if (prevBeforeIndentValue == 2) {
               formatSelection(attr);
               formatSelection(Attribute.getIndentLevel(0));
+              moveCursorToEnd();
             } else if (prevBeforeIndentValue == null) {
               if (length > 1) {
                 if (onEditingComplete != null) {
@@ -569,12 +574,13 @@ class QuillController extends ChangeNotifier {
           }
         } else if (tmpCurrentAttr != attr.value && indentValue == 2) {
           formatSelection(attr);
+          moveCursorToEnd();
         } else if (indentValue == 0) {
           final trimNewLineCondition = currentIndentValue == null 
             && beforeIndentValue == 0
             && currentIndentValue == null
-            && (tmpCurrentAttr == attr.value || isCheckList)
-            && (tmpBeforeAttr == attr.value || isCheckList);
+            && (tmpCurrentAttr == attr.value)
+            && (tmpBeforeAttr == attr.value);
 
           if (trimNewLineCondition) {
             final isBeforeNewLine = before.isInsert && before.data == '\n';
