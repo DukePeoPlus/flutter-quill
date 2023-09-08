@@ -232,7 +232,10 @@ class QuillController extends ChangeNotifier {
 
   void replaceText(
       int index, int len, Object? data, TextSelection? textSelection,
-      {bool ignoreFocus = false}) {
+      {
+        bool ignoreFocus = false
+      }
+    ) {
     assert(data is String || data is Embeddable);
 
     if (onReplaceText != null && !onReplaceText!(index, len, data)) {
@@ -305,7 +308,11 @@ class QuillController extends ChangeNotifier {
     });
   }
 
-  void formatText(int index, int len, Attribute? attribute) {
+  void formatText(
+    int index,
+    int len,
+    Attribute? attribute,
+  ) {
     if (len == 0 &&
         attribute!.isInline &&
         attribute.key != Attribute.link.key) {
@@ -314,7 +321,11 @@ class QuillController extends ChangeNotifier {
       toggledStyle = toggledStyle.put(attribute);
     }
 
-    final change = document.format(index, len, attribute);
+    final change = document.format(
+      index,
+      len,
+      attribute,
+    );
     // Transform selection against the composed change and give priority to
     // the change. This is needed in cases when format operation actually
     // inserts data into the document (e.g. embeds).
@@ -328,7 +339,11 @@ class QuillController extends ChangeNotifier {
   }
 
   void formatSelection(Attribute? attribute) {
-    formatText(selection.start, selection.end - selection.start, attribute);
+    formatText(
+      selection.start,
+      selection.end - selection.start,
+      attribute,
+    );
   }
 
   void moveCursorToStart() {
@@ -513,9 +528,11 @@ class QuillController extends ChangeNotifier {
           if (decreaseCondition) {
             formatSelection(attr);
             formatSelection(Attribute.getIndentLevel(1));
+            moveCursorToEnd();
           } else if (increaseCondition) {
             formatSelection(attr);
             formatSelection(Attribute.getIndentLevel(indentValue + 1));
+            moveCursorToEnd();
           }
         } else if (indentValue == 1) {
           final decreaseCondition = currentIndentValue == null
@@ -749,6 +766,9 @@ class QuillController extends ChangeNotifier {
     return false;
   }
 
+  Operation? tmpBeforeOp;
+  Operation? tmpChangeOp;
+
   /// setTag
   /// 
   /// changes.listen 내에서 Tag 감지
@@ -761,10 +781,10 @@ class QuillController extends ChangeNotifier {
     final checkHashTag = RegExp(r'^#[\S]+$');
     final space = RegExp(r'\s');
     
-    int? index;
     final textLength = document.length;
-    for (final operation in event.change.toList()) {
+    int? index;
 
+    for (final operation in event.change.toList()) {
       final isTag = operation.attributes?.keys.contains(Attribute.tag.key)
         ?? false;
       final isHashtag = operation.attributes?.keys.contains(Attribute.hashtag.key)
@@ -772,7 +792,34 @@ class QuillController extends ChangeNotifier {
       final isContain = isTag || isHashtag;
 
       Attribute attribute = Attribute.tag;
+
+      var canDelete = true;
       var checkRegExp = checkTag;
+
+      if (tmpBeforeOp != null && tmpChangeOp != null) {
+        if (tmpBeforeOp?.data is String && tmpChangeOp?.data is String) {
+          final beforeOp = event.before.first;
+          var nextOp;
+
+          if (event.before.length > 1) {
+            nextOp = event.before.elementAt(1);
+          }
+
+          final condition = (
+              nextOp == null 
+              || nextOp?.data != '\n'
+            ) && nextOp?.data != ' ';
+
+          if (beforeOp.data is String) {
+            final tmpData = '${tmpBeforeOp?.data}${tmpChangeOp?.data}';
+            final isNotEmpty = tmpChangeOp?.data != '';
+
+            if ((tmpData == beforeOp.data && isNotEmpty) || condition) {
+              canDelete = false;
+            }
+          }
+        }
+      }
 
       if (isHashtag) {
         attribute = Attribute.hashtag;
@@ -798,13 +845,13 @@ class QuillController extends ChangeNotifier {
                 index + 1,
                 Attribute.clone(
                   attribute, null
-                )
+                ),
               );
 
               formatSelection(
                 Attribute.clone(
-                  attribute, null
-                )
+                  attribute, null,
+                ),
               );
             }
             return;
@@ -821,13 +868,13 @@ class QuillController extends ChangeNotifier {
                 ' $text ',
                 TextSelection.collapsed(
                   offset: index
-                )
+                ),
               );
 
               formatText(
                 index,
                 index + text.length,
-                attribute
+                attribute,
               );
               break;
             }
@@ -843,26 +890,25 @@ class QuillController extends ChangeNotifier {
               formatText(
                 index,
                 index + 1,
-                attribute
+                attribute,
               );
               break;
             }
           }
         }
+
         index = null;
-      } else if (operation.key == Operation.deleteKey) {
+      } else if (operation.key == Operation.deleteKey && canDelete) {
         final operaions = document.toDelta().toList();
 
         for (final tmpOperation in operaions) {
+          final index = operaions.indexOf(tmpOperation);
           final hasTag = tmpOperation.hasAttribute(Attribute.tag.key);
           final hasHashtag = tmpOperation.hasAttribute(Attribute.hashtag.key);
 
           if (hasTag || hasHashtag) {
-            final plainText = document.toPlainText();
-
             if (tmpOperation.data is String) {
               final operaionData = tmpOperation.data as String;
-              final index = plainText.indexOf(operaionData);
               final offset = selection.baseOffset;
 
               if (index <= offset && offset <= index + operaionData.length) {
@@ -872,13 +918,25 @@ class QuillController extends ChangeNotifier {
                   '',
                   TextSelection.collapsed(
                     offset: index
-                  )
+                  ),
                 );
               }
             }
           }
         }
       }
+    }
+
+    if (event.before.length > 0) {
+      tmpBeforeOp = event.before.first;
+    } else {
+      tmpBeforeOp = null;
+    }
+
+    if (event.change.length > 1) {
+      tmpChangeOp = event.change.elementAt(1);
+    } else {
+      tmpChangeOp = null;
     }
   }
 
