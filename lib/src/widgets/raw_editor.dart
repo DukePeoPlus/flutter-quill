@@ -364,6 +364,7 @@ class RawEditorState extends EditorState
       onSelectAll: selectAllEnabled
           ? () => selectAll(SelectionChangedCause.toolbar)
           : null,
+      onLiveTextInput: () {  },
     );
   }
 
@@ -1761,6 +1762,11 @@ class RawEditorState extends EditorState
   @override
   // TODO: implement liveTextInputEnabled
   bool get liveTextInputEnabled => false;
+  
+  @override
+  void insertContent(KeyboardInsertedContent content) {
+    // TODO: implement insertContent
+  }
 }
 
 class _Editor extends MultiChildRenderObjectWidget {
